@@ -1,6 +1,20 @@
 {
-  "exclude": ["./cypress", "./cypress.config.ts"],
-  "include": ["**/*.js", "**/*.jsx"],
+  "exclude": [
+    "./cypress",
+    "./cypress.config.ts",
+    ".git",
+    ".app-cache",
+    ".npm",
+    ".npm-tmp",
+    "dist",
+    "dist*",
+    "node_modules",
+    "subfolder/dist",
+    "subfolder/node_modules",
+    "**/dist/*",
+    "**/node_modules/*"
+  ],
+  "include": ["./app", "./contracts/deploy", "./contracts/test"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
     "types": ["vitest/globals"],
@@ -19,6 +33,7 @@
       "~/*": ["./app/*"]
     },
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "checkJs": true
   }
 }

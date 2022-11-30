@@ -1,4 +1,3 @@
-import { json } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -22,12 +21,16 @@ export const meta = () => ({
 
 export default function App() {
   return (
-    <html lang="en" className="h-full">
+    <html
+      lang="en"
+      data-theme="lemonade"
+      className="h-full bg-base-200 font-mono"
+    >
       <head>
         <Meta />
         <Links />
       </head>
-      <body className="h-full">
+      <body className=" ">
         <Outlet />
         <ScrollRestoration />
         <Scripts />

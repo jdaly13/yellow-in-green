@@ -17,15 +17,9 @@ model User {
   // password Password?
   // notes    Note[]
   submissions Submission[]
-  games       Game[]
+  currentGame Game?        @relation(fields: [gameId], references: [id])
+  gameId      String?
 }
-
-// model Password {
-//   hash String
-
-//   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-//   userId String @unique
-// }
 
 // model Note {
 //   id    String @id @default(cuid())
@@ -74,21 +68,24 @@ model Answer {
 }
 
 model Game {
-  id        String     @id @default(cuid())
-  name      String     @unique
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  current   Boolean    @default(false)
-  questions Question[]
-  winner    User?      @relation(fields: [winnerId], references: [id])
-  winnerId  String     @unique
+  id          String       @id @default(cuid())
+  name        String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  current     Boolean      @default(false)
+  questions   Question[]
+  winnerId    String?      
+  submissions Submission[]
+  user        User[]        
 }
 
 model Submission {
   id          String   @id @default(cuid())
   createdBy   User     @relation(fields: [createdById], references: [id])
-  createdById String   @unique
+  createdById String
   question    Question @relation(fields: [questionId], references: [id])
-  questionId  String   @unique
+  questionId  String   
   answer      String
+  game        Game     @relation(fields: [gameId], references: [id])
+  gameId      String
 }

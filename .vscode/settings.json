@@ -1,0 +1,15 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.tabSize": 2,
+  "css.customData": [".vscode/css_custom_data.json"],
+  "typescript.validate.enable": false,
+  "javascript.validate.enable": false,
+  "eslint.validate": ["javascript", "javascriptreact"]
+}

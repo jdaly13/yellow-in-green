@@ -6,48 +6,46 @@ const prisma = new PrismaClient();
 
 async function seed() {
   const email = process.env.EMAIL;
-  const dummyEmail = "rachel@remix.run";
-  const dummyPassword = await bcrypt.hash("racheliscool", 10);
   const hashedPassword = await bcrypt.hash(process.env.PASSWORD, 10);
 
   // cleanup the existing database
-  await prisma.user.delete({ where: { email: dummyEmail } }).catch(() => {
-    // no worries if it doesn't exist yet
-  });
+  await prisma.user
+    .delete({
+      where: { address: "0xA12C13bCdfe2C6E2dFDA3Ea1767e0d8f93817Aa2" },
+    })
+    .catch(() => {
+      // no worries if it doesn't exist yet
+    });
+
+  await prisma.user
+    .delete({
+      where: { address: "0xA17E0E2732Dde986c5A328277d3e922471F83a11" },
+    })
+    .catch(() => {
+      // no worries if it doesn't exist yet
+    });
 
   await prisma.adminUser.delete({ where: { email } }).catch(() => {
     // no worries if it doesn't exist yet
   });
 
-  await prisma.game.delete({ where: { name: "first game" } }).catch(() => {
-    // no worries if it doesn't exist yet
-  });
+  await prisma.game
+    .delete({ where: { id: "clb1blnbz0004s2v2chdujr0i" } })
+    .catch((error) => {
+      console.log("error", error);
+      // no worries if it doesn't exist yet
+    });
 
   // LEGACY
   const user = await prisma.user.create({
     data: {
-      email: dummyEmail,
-      password: {
-        create: {
-          hash: dummyPassword,
-        },
-      },
+      address: "0xA12C13bCdfe2C6E2dFDA3Ea1767e0d8f93817Aa2", //hardhat 17
     },
   });
 
   console.log({ user });
 
-  await prisma.note.create({
-    data: {
-      title: "My first note",
-      body: "Hello, world!",
-      userId: user.id,
-    },
-  });
-
-  // END OF LEGACY
-
-  const adminUser = await prisma.adminUser.create({
+  await prisma.adminUser.create({
     data: {
       email,
       password: {
