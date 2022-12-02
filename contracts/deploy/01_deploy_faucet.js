@@ -1,13 +1,16 @@
 module.exports = async (hre) => {
-  const { getNamedAccounts, deployments, getChainId } = hre;
-  console.log({ getNamedAccounts, deployments });
+  const { getNamedAccounts, deployments, getChainId, ethers } = hre;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
+  const triviaDeployment = await deployments.get("TriviaToken");
+  const amount = ethers.utils.parseEther("1.0");
+
   const faucet = await deploy("Faucet", {
     from: deployer,
     log: true,
+    args: [triviaDeployment.address, amount, 86400],
   });
 
   if (

@@ -27,7 +27,7 @@ contract Faucet is Ownable {
 
     token.transfer(address(uint160(_to)), amount);
 
-    lockTime[msg.sender] = block.timestamp + 1 days;
+    lockTime[msg.sender] = block.timestamp + frequency;
     emit funded(amount);
   }
 
