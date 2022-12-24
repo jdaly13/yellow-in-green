@@ -7,10 +7,11 @@ module.exports = async (hre) => {
   const triviaDeployment = await deployments.get("TriviaToken");
   const amount = ethers.utils.parseEther("1.0");
 
+  const secondsInDay = 86400;
   const faucet = await deploy("Faucet", {
     from: deployer,
     log: true,
-    args: [triviaDeployment.address, amount, 86400],
+    args: [triviaDeployment.address, amount, secondsInDay],
   });
 
   if (

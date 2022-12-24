@@ -71,3 +71,7 @@ export function truncateAddress(address) {
     );
   }
 }
+
+export function checkAccount(address) {
+  return address === process.env.ACCOUNT;
+}

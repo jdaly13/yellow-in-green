@@ -14,13 +14,20 @@ import {
   WagmiConfig,
   defaultChains,
 } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
 
-const chains = [...defaultChains, chain.polygon, chain.hardhat];
+const chains = [
+  ...defaultChains,
+  chain.polygon,
+  chain.hardhat,
+  chain.localhost,
+];
 
 export default function WalletProvider({ children }) {
   // Wagmi client
   const { provider } = configureChains(chains, [
-    walletConnectProvider({ projectId: "84492e8bb8d816b88bfdb4789ee16d17" }),
+    publicProvider(),
+    // walletConnectProvider({ projectId: "84492e8bb8d816b88bfdb4789ee16d17" }),
   ]);
   const wagmiClient = createClient({
     autoConnect: true,

@@ -1,4 +1,4 @@
-import { cloneElement, isValidElement } from "react";
+import { cloneElement, isValidElement, useState } from "react";
 import { useAccount, useDisconnect, useNetwork } from "wagmi";
 import Header from "./Header";
 
@@ -6,6 +6,7 @@ export default function Wrapper({ children }) {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const { chain, chains } = useNetwork();
+  const [tokenData, setTokenData] = useState(null);
   if (!window.Buffer) {
     window.Buffer = Buffer;
   }
@@ -17,6 +18,8 @@ export default function Wrapper({ children }) {
         isConnected={isConnected}
         chains={chains}
         chain={chain}
+        tokenData={tokenData}
+        setTokenData={setTokenData}
       ></Header>
       {isValidElement(children) &&
         cloneElement(children, {

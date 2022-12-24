@@ -8,13 +8,17 @@ import {
   createUserSubmission,
   checkAndDeclareWinner,
 } from "~/models/game.server";
+import { getContracts } from "~/services/contracts.server";
 
+import ContractContextWrapper from "~/components/ContractContextWrapper";
 import WalletProvider from "~/components/WalletProvider";
 import Wrapper from "~/components/Wrapper";
 
 export async function loader({ params }) {
+  const network = process.env.NETWORK || "localhost";
   const game = await getSpecificGame(params.gameid);
-  return json(game);
+  const contractObj = getContracts(network);
+  return json({ game, contractObj, network });
 }
 
 export async function action({ request }) {
@@ -65,17 +69,15 @@ function GameBody(props) {
   const [answerObj, setAnswerObj] = React.useState({});
   const [user, setUser] = React.useState("");
   const [errorAnswer, setAnswerError] = React.useState(false);
-  const [questions, setQuestions] = React.useState(data.questions);
+  const [questions, setQuestions] = React.useState(data.game.questions);
   const [gameSubmitButton, setGameSubmitButton] = React.useState(false);
   const [successMessage, setSuccessMessage] = React.useState("");
   const { address, isConnected } = props;
   const previousAddress = usePrevious(address);
 
-  console.log("data", data);
-
-  if (address && previousAddress !== address && data.id) {
+  if (address && previousAddress !== address && data.game.id) {
     async function upsertUser() {
-      const fetchUrl = `/api/user?address=${address}&game=${data.id}`;
+      const fetchUrl = `/api/user?address=${address}&game=${data.game.id}`;
       const response = await fetch(fetchUrl);
       const content = await response.json();
       console.log(content);
@@ -154,7 +156,7 @@ function GameBody(props) {
         _question: event.target.id,
         data: answerObj[event.target.id],
         user: user.id,
-        gameId: data.id,
+        gameId: data.game.id,
       },
       { method: "post" }
     );
@@ -182,7 +184,11 @@ function GameBody(props) {
   };
 
   const checkFinalStatus = () => {
-    if (!data.current && data.winnerId && data.winnerId === address) {
+    if (
+      !data.game.current &&
+      data.game.winnerId &&
+      data.game.winnerId === address
+    ) {
       return (
         <div className="alert alert-success shadow-lg">
           <div>
@@ -206,7 +212,11 @@ function GameBody(props) {
         </div>
       );
     }
-    if (!data.current && data.winnerId && data.winnerId !== address) {
+    if (
+      !data.game.current &&
+      data.game.winnerId &&
+      data.game.winnerId !== address
+    ) {
       return (
         <h2>
           we Apologize this game is not current and not playable stay tuned for
@@ -261,7 +271,7 @@ function GameBody(props) {
         </div>
       )}
 
-      <h1 className="mb-8 text-center text-4xl uppercase">{data.name}</h1>
+      <h1 className="mb-8 text-center text-4xl uppercase">{data.game.name}</h1>
       {checkFinalStatus()}
 
       {!isConnected && !address && (
@@ -269,8 +279,8 @@ function GameBody(props) {
           Connect your wallet to submit answers!!!!
         </h1>
       )}
-      {data.current &&
-        !data.winnerId &&
+      {data.game.current &&
+        !data.game.winnerId &&
         questions.map((question, index) => {
           return (
             <Form
@@ -311,7 +321,7 @@ function GameBody(props) {
             </Form>
           );
         })}
-      {gameSubmitButton && data.current && (
+      {gameSubmitButton && data.game.current && (
         <Form onSubmit={checkAnswers} className="flex flex-col text-left">
           <p className="mb-4 font-bold uppercase">
             You have successfully answered all questions!
@@ -326,11 +336,14 @@ function GameBody(props) {
 }
 
 export default function GamePage() {
+  const data = useLoaderData();
   return (
-    <WalletProvider>
-      <Wrapper>
-        <GameBody />
-      </Wrapper>
-    </WalletProvider>
+    <ContractContextWrapper contracts={data.contractObj} network={data.network}>
+      <WalletProvider>
+        <Wrapper>
+          <GameBody />
+        </Wrapper>
+      </WalletProvider>
+    </ContractContextWrapper>
   );
 }

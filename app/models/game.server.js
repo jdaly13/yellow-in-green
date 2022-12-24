@@ -154,3 +154,25 @@ export async function checkAndDeclareWinner(id, game, submission) {
     }
   }
 }
+
+export async function createGame(game) {
+  return prisma.game.create({
+    data: {
+      name: game,
+    },
+  });
+}
+
+export async function createQuestion(questionText, answerText, gameId) {
+  return prisma.question.create({
+    data: {
+      content: questionText,
+      gameId: gameId,
+      answer: {
+        create: {
+          hash: await bcrypt.hash(answerText, 10),
+        },
+      },
+    },
+  });
+}

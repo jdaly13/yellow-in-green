@@ -1,15 +1,29 @@
+import { useContext } from "react";
 import { useWeb3Modal } from "@web3modal/react";
 import { truncateAddress } from "~/utils";
+import { ContractContext } from "~/components/ContractContextWrapper";
+import BalanceInfo from "./BalanceInfo";
 export default function Header({
   address,
   disconnect,
   isConnected,
   chains,
   chain,
+  tokenData,
+  setTokenData,
 }) {
   const { open } = useWeb3Modal();
+  const { contracts, network } = useContext(ContractContext);
+  console.log({ contracts }, { network });
   return (
-    <header className="my-8 flex justify-end ">
+    <header className="my-8 flex justify-between ">
+      {isConnected && address && (
+        <BalanceInfo
+          setTokenData={setTokenData}
+          tokenData={tokenData}
+          address={address}
+        />
+      )}
       {!isConnected && (
         <button className="btn-primary btn" onClick={() => open()}>
           Connect Wallet
