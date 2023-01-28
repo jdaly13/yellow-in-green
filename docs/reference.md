@@ -24,6 +24,20 @@ send tokens from that account to faucet contract 0xe7f1725E7734CE288F8367e1Bb143
 fund ether to this account - 0xA12C13bCdfe2C6E2dFDA3Ea1767e0d8f93817Aa2 (not in list of 20 hardhat default accounts)
 run script `fund-protocol.js` that will give 1 TRIVIA to 0xA12C13bCdfe2C6E2dFDA3Ea1767e0d8f93817Aa2
 
+## Run locally
+
+`npm run dev`
+
 # LINKS - FYI
 
 https://medium.com/@prashantramnyc/difference-between-session-cookies-vs-jwt-json-web-tokens-for-session-management-4be67d2f066e
+
+Wagmi docs version
+https://0.7.x.wagmi.sh/docs/WagmiConfig
+
+Tutoria - sports betting daPP - https://medium.com/coinmonks/create-a-sports-betting-dapp-on-the-ethereum-blockchain-part-1-1f69f908b939
+
+## Store Secret on EVM Chain
+
+https://stackoverflow.com/questions/69060605/store-secret-in-evm-blockchain
+https://github.com/pubkey/eth-crypto/blob/master/tutorials/encrypted-message.md

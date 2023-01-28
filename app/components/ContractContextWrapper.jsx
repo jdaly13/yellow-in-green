@@ -6,10 +6,11 @@ export default function ContractContextWrapper({
   children,
   network,
   contracts,
+  game,
 }) {
   return (
     <ContractContext.Provider
-      value={{ contracts: contracts, network: network }}
+      value={{ contracts: contracts, game: game, network: network }}
     >
       {children}
     </ContractContext.Provider>

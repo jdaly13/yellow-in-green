@@ -11,10 +11,10 @@ export default function Header({
   chain,
   tokenData,
   setTokenData,
+  setDeposit,
+  deposit,
 }) {
   const { open } = useWeb3Modal();
-  const { contracts, network } = useContext(ContractContext);
-  console.log({ contracts }, { network });
   return (
     <header className="my-8 flex justify-between ">
       {isConnected && address && (
@@ -22,6 +22,8 @@ export default function Header({
           setTokenData={setTokenData}
           tokenData={tokenData}
           address={address}
+          setDeposit={setDeposit}
+          deposit={deposit}
         />
       )}
       {!isConnected && (

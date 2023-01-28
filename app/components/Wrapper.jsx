@@ -7,6 +7,7 @@ export default function Wrapper({ children }) {
   const { disconnect } = useDisconnect();
   const { chain, chains } = useNetwork();
   const [tokenData, setTokenData] = useState(null);
+  const [deposit, setDeposit] = useState(false);
   if (!window.Buffer) {
     window.Buffer = Buffer;
   }
@@ -20,6 +21,8 @@ export default function Wrapper({ children }) {
         chain={chain}
         tokenData={tokenData}
         setTokenData={setTokenData}
+        setDeposit={setDeposit}
+        deposit={deposit}
       ></Header>
       {isValidElement(children) &&
         cloneElement(children, {
@@ -28,6 +31,7 @@ export default function Wrapper({ children }) {
           isConnected,
           chains,
           chain,
+          deposit,
         })}
     </div>
   );

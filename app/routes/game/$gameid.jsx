@@ -64,6 +64,8 @@ export function usePrevious(value) {
 }
 
 function GameBody(props) {
+  const { address, isConnected, deposit } = props;
+  console.log("deposit", deposit);
   const data = useLoaderData();
   const fetcher = useFetcher();
   const [answerObj, setAnswerObj] = React.useState({});
@@ -72,10 +74,9 @@ function GameBody(props) {
   const [questions, setQuestions] = React.useState(data.game.questions);
   const [gameSubmitButton, setGameSubmitButton] = React.useState(false);
   const [successMessage, setSuccessMessage] = React.useState("");
-  const { address, isConnected } = props;
-  const previousAddress = usePrevious(address);
+  const previousDepositState = usePrevious(deposit);
 
-  if (address && previousAddress !== address && data.game.id) {
+  if (address && deposit & (previousDepositState !== deposit) && data.game.id) {
     async function upsertUser() {
       const fetchUrl = `/api/user?address=${address}&game=${data.game.id}`;
       const response = await fetch(fetchUrl);
@@ -85,6 +86,7 @@ function GameBody(props) {
     }
     upsertUser();
   }
+
   React.useEffect(() => {
     if (user) {
       console.log("user use effect", user.submissions, questions);
@@ -274,9 +276,10 @@ function GameBody(props) {
       <h1 className="mb-8 text-center text-4xl uppercase">{data.game.name}</h1>
       {checkFinalStatus()}
 
-      {!isConnected && !address && (
-        <h1 className="mb-8 text-lg uppercase text-error">
-          Connect your wallet to submit answers!!!!
+      {!isConnected && !deposit && (
+        <h1 className="mx-auto mb-8 w-1/2 text-lg uppercase text-error">
+          Connect your wallet and Add Your TRIVIA token to see full list of
+          questions and your chance to earn more TRIVIA Tokens and a free NFT
         </h1>
       )}
       {data.game.current &&
@@ -290,11 +293,11 @@ function GameBody(props) {
               onSubmit={submitForm}
               method="post"
             >
-              <div className="mb-6 block max-w-md text-left ">
-                {question.content}
-              </div>
-              {address && (
+              {deposit ? (
                 <div className="text-left">
+                  <div className="mb-6 block max-w-md text-left ">
+                    {question.content}
+                  </div>
                   <input
                     onChange={(e) => {
                       updateValue(e, index);
@@ -317,6 +320,10 @@ function GameBody(props) {
                     </h1>
                   )}
                 </div>
+              ) : (
+                <div className="mb-6 block max-w-md text-left ">
+                  {question.content.split(" ").splice(0, 5).join(" ")} ...
+                </div>
               )}
             </Form>
           );
@@ -338,7 +345,11 @@ function GameBody(props) {
 export default function GamePage() {
   const data = useLoaderData();
   return (
-    <ContractContextWrapper contracts={data.contractObj} network={data.network}>
+    <ContractContextWrapper
+      contracts={data.contractObj}
+      game={data.game}
+      network={data.network}
+    >
       <WalletProvider>
         <Wrapper>
           <GameBody />
