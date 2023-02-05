@@ -1,7 +1,5 @@
-import { useContext } from "react";
 import { useWeb3Modal } from "@web3modal/react";
 import { truncateAddress } from "~/utils";
-import { ContractContext } from "~/components/ContractContextWrapper";
 import BalanceInfo from "./BalanceInfo";
 export default function Header({
   address,

@@ -1,5 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import { useContractRead, useContractWrite } from "wagmi";
+import {
+  useContractRead,
+  useContractWrite,
+  useContract,
+  useProvider,
+} from "wagmi";
 import { Link } from "@remix-run/react";
 import { utils } from "ethers";
 import { ContractContext } from "~/components/ContractContextWrapper";
@@ -65,44 +70,25 @@ export default function BalanceInfo({
         </>
       )}
       {poolButton && tokenData >= 1.0 && !deposit && (
-        <PoolButton setPoolButton={setPoolButton} setDeposit={setDeposit} />
+        <PoolButton
+          setPoolButton={setPoolButton}
+          address={address}
+          setTokenData={setTokenData}
+          setDeposit={setDeposit}
+        />
       )}
       {deposit && <p>You are currently playing the game</p>}
     </div>
-    // <div>
-    //   {tokenData >= 1.0 ? (
-    //     <div>
-    //       <h3>You have {tokenData} TRIVIA Token</h3>
-    //       {poolButton && (
-    //         <PoolButton setPoolButton={setPoolButton} setDeposit={setDeposit} />
-    //       )}
-    //       {deposit && <p>You can now play the game</p>}
-    //     </div>
-    //   ) : (
-    //     <div>
-    //       {deposit ? (
-    //         <p>You can now play the game</p>
-    //       ) : (
-    // <>
-    //   <h3>You need at least 1 Trivia Token to play the game</h3>
-    //   <p>
-    //     visit the{" "}
-    //     <Link className="underline" to="/faucet">
-    //       {" "}
-    //       faucet for free TRIVIA token
-    //     </Link>
-    //   </p>
-    // </>
-    //       )}
-    //     </div>
-    //   )}
-    // </div>
   );
 }
 
 export function PoolButton(props) {
+  const [toastMessage, setToastMessage] = useState("");
+  const [processStage, setProcessStage] = useState(0);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
   const { setPoolButton, setDeposit } = props;
   const { contracts, game } = useContext(ContractContext);
+  const provider = useProvider();
   const contractWrite = useContractWrite({
     mode: "recklesslyUnprepared",
     address: contracts.poolJson.address,
@@ -120,6 +106,8 @@ export function PoolButton(props) {
     },
   });
 
+  console.log("Address", props.address, props.setTokenData);
+
   const triviaApprove = useContractWrite({
     mode: "recklesslyUnprepared",
     address: contracts.triviaJson.address,
@@ -136,9 +124,19 @@ export function PoolButton(props) {
       console.log("Success", data);
     },
   });
+
+  const tokenContract = useContract({
+    address: contracts.triviaJson.address,
+    abi: contracts.triviaJson.abi,
+    signerOrProvider: provider,
+  });
+
+  console.log("tokenContract", tokenContract, tokenContract.balanceOf);
   console.log({ contractWrite });
 
   const buttonClicked = async () => {
+    setButtonDisabled(true);
+    setProcessStage(1);
     const approveTx = await triviaApprove.writeAsync();
     const tx = await contractWrite.writeAsync();
     const confirmation = await tx.wait();
@@ -146,14 +144,53 @@ export function PoolButton(props) {
       setPoolButton(false);
       setDeposit(true);
       console.log("Congrats");
+      setProcessStage(3);
+      setToastMessage("Transaction Success");
+      const currentTriviaBalance = await tokenContract.balanceOf(props.address);
+      const formattedData = utils.formatEther(currentTriviaBalance);
+      props.setTokenData(formattedData);
       // TODO - hack good for now and myabe later
-      window.location.reload();
+      // window.location.reload();
+    } else {
+      setProcessStage(2);
+      setToastMessage("Transaction did not go through - try again");
     }
   };
 
   return (
-    <button className="btn-primary btn my-2 block py-2" onClick={buttonClicked}>
-      Play Game
-    </button>
+    <>
+      <button
+        disabled={buttonDisabled}
+        className="btn-primary btn my-2 block py-2"
+        onClick={buttonClicked}
+      >
+        Play Game
+      </button>
+      {processStage > 0 && (
+        <div className="toast-end toast">
+          {processStage === 1 && (
+            <div className="alert alert-info">
+              <div>
+                <span>Trasaction Processing</span>
+              </div>
+            </div>
+          )}
+          {processStage === 2 && (
+            <div className="alert alert-error">
+              <div>
+                <span>{toastMessage}</span>
+              </div>
+            </div>
+          )}
+          {processStage === 3 && (
+            <div className="alert alert-success">
+              <div>
+                <span>{toastMessage}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </>
   );
 }

@@ -315,7 +315,7 @@ function GameBody(props) {
                     Submit
                   </button>
                   {question.answer && (
-                    <h1 className="my-4 text-success text-primary">
+                    <h1 className="my-4 text-primary">
                       You have answered this question correctly
                     </h1>
                   )}
