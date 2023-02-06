@@ -16,6 +16,14 @@ export default function Header({
 }) {
   const { open } = useWeb3Modal();
   const { network } = useContext(ContractContext);
+  const checkChain = () => {
+    if (isConnected && address && chain?.name.toLowerCase() !== network) {
+      setDeposit(false);
+      return <p> Please connect your wallet to the {network} network</p>;
+    } else {
+      return null;
+    }
+  };
   return (
     <header className="my-8 flex justify-between ">
       {isConnected && address && chain?.name.toLowerCase() === network && (
@@ -28,9 +36,7 @@ export default function Header({
           chain={chain}
         />
       )}
-      {isConnected && address && chain?.name.toLowerCase() !== network && (
-        <p> Please connect your wallet to the {network} network</p>
-      )}
+      {checkChain()}
       {!isConnected && (
         <button className="btn-primary btn" onClick={() => open()}>
           Connect Wallet

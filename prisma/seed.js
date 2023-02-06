@@ -8,43 +8,6 @@ async function seed() {
   const email = process.env.EMAIL;
   const hashedPassword = await bcrypt.hash(process.env.PASSWORD, 10);
 
-  // cleanup the existing database
-  await prisma.user
-    .delete({
-      where: { address: "0xA12C13bCdfe2C6E2dFDA3Ea1767e0d8f93817Aa2" },
-    })
-    .catch(() => {
-      // no worries if it doesn't exist yet
-    });
-
-  await prisma.user
-    .delete({
-      where: { address: "0xA17E0E2732Dde986c5A328277d3e922471F83a11" },
-    })
-    .catch(() => {
-      // no worries if it doesn't exist yet
-    });
-
-  await prisma.adminUser.delete({ where: { email } }).catch(() => {
-    // no worries if it doesn't exist yet
-  });
-
-  await prisma.game
-    .delete({ where: { id: "clb1blnbz0004s2v2chdujr0i" } })
-    .catch((error) => {
-      console.log("error", error);
-      // no worries if it doesn't exist yet
-    });
-
-  // LEGACY
-  const user = await prisma.user.create({
-    data: {
-      address: "0xA12C13bCdfe2C6E2dFDA3Ea1767e0d8f93817Aa2", //hardhat 17
-    },
-  });
-
-  console.log({ user });
-
   await prisma.adminUser.create({
     data: {
       email,
@@ -58,7 +21,7 @@ async function seed() {
 
   const firstGame = await prisma.game.create({
     data: {
-      name: "first game",
+      name: "Inaugural Trivia Game",
       current: true,
     },
   });
@@ -100,17 +63,6 @@ async function seed() {
       },
     },
   });
-
-  const test = await prisma.game.findFirst({
-    where: {
-      current: true,
-    },
-    include: {
-      questions: true,
-    },
-  });
-
-  console.log({ test });
 
   console.log({ firstQuestion });
   console.log(`Database has been seeded. 🌱`);

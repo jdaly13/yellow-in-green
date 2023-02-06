@@ -30,12 +30,20 @@ run script `fund-protocol.js` that will give 1 TRIVIA to 0xA12C13bCdfe2C6E2dFDA3
 
 # LINKS - FYI
 
+Remix - Docker - FLY.io
+https://remix.run/docs/en/v1/tutorials/jokes#deployment
+https://github.com/kentcdodds/onewheel-blog/blob/main/.github/workflows/deploy.yml
+https://egghead.io/lessons/remix-deploy-a-remix-application-to-fly-io
+
 https://medium.com/@prashantramnyc/difference-between-session-cookies-vs-jwt-json-web-tokens-for-session-management-4be67d2f066e
 
 Wagmi docs version
 https://0.7.x.wagmi.sh/docs/WagmiConfig
 
 Tutoria - sports betting daPP - https://medium.com/coinmonks/create-a-sports-betting-dapp-on-the-ethereum-blockchain-part-1-1f69f908b939
+
+Hardhat Deploy and Etherscan verify
+https://blog.chain.link/how-to-verify-smart-contract-on-etherscan-hardhat/
 
 ## Store Secret on EVM Chain
 

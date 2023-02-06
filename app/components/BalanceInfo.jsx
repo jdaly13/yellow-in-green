@@ -33,10 +33,6 @@ export default function BalanceInfo({
     args: [game.id, address],
   });
 
-  // console.log("active player", activePlayer?.data);
-
-  // console.log(utils.formatEther(activePlayer.data) >= 1);
-
   useEffect(() => {
     if (data) {
       const formattedData = utils.formatEther(data);
@@ -51,9 +47,11 @@ export default function BalanceInfo({
     if (activePlayer?.data && utils.formatEther(activePlayer.data) >= 1) {
       setDeposit(true);
     }
+    if (activePlayer?.data && utils.formatEther(activePlayer.data) < 1) {
+      setDeposit(false);
+    }
   }, [activePlayer, deposit, setDeposit]);
 
-  console.log({ deposit });
   return (
     <div>
       <h3>You have {tokenData} TRIVIA Token</h3>
