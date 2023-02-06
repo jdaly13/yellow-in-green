@@ -1,6 +1,8 @@
 import { useWeb3Modal } from "@web3modal/react";
+import { useContext } from "react";
 import { truncateAddress } from "~/utils";
 import BalanceInfo from "./BalanceInfo";
+import { ContractContext } from "~/components/ContractContextWrapper";
 export default function Header({
   address,
   disconnect,
@@ -13,16 +15,21 @@ export default function Header({
   deposit,
 }) {
   const { open } = useWeb3Modal();
+  const { network } = useContext(ContractContext);
   return (
     <header className="my-8 flex justify-between ">
-      {isConnected && address && (
+      {isConnected && address && chain?.name.toLowerCase() === network && (
         <BalanceInfo
           setTokenData={setTokenData}
           tokenData={tokenData}
           address={address}
           setDeposit={setDeposit}
           deposit={deposit}
+          chain={chain}
         />
+      )}
+      {isConnected && address && chain?.name.toLowerCase() !== network && (
+        <p> Please connect your wallet to the {network} network</p>
       )}
       {!isConnected && (
         <button className="btn-primary btn" onClick={() => open()}>

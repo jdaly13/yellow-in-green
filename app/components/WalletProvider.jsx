@@ -15,6 +15,7 @@ import {
   defaultChains,
 } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
+import { infuraProvider } from "wagmi/providers/infura";
 
 const chains = [
   ...defaultChains,
@@ -23,9 +24,12 @@ const chains = [
   chain.localhost,
 ];
 
+const infuraID = "5992eda22fc948b196ac1629655d7c8a";
+
 export default function WalletProvider({ children }) {
   // Wagmi client
   const { provider } = configureChains(chains, [
+    infuraProvider({ apiKey: infuraID }),
     publicProvider(),
     // walletConnectProvider({ projectId: "84492e8bb8d816b88bfdb4789ee16d17" }),
   ]);

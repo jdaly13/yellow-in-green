@@ -106,8 +106,6 @@ export function PoolButton(props) {
     },
   });
 
-  console.log("Address", props.address, props.setTokenData);
-
   const triviaApprove = useContractWrite({
     mode: "recklesslyUnprepared",
     address: contracts.triviaJson.address,
@@ -131,29 +129,36 @@ export function PoolButton(props) {
     signerOrProvider: provider,
   });
 
-  console.log("tokenContract", tokenContract, tokenContract.balanceOf);
-  console.log({ contractWrite });
-
   const buttonClicked = async () => {
     setButtonDisabled(true);
     setProcessStage(1);
     const approveTx = await triviaApprove.writeAsync();
-    const tx = await contractWrite.writeAsync();
-    const confirmation = await tx.wait();
-    if (confirmation.blockNumber) {
-      setPoolButton(false);
-      setDeposit(true);
-      console.log("Congrats");
-      setProcessStage(3);
-      setToastMessage("Transaction Success");
-      const currentTriviaBalance = await tokenContract.balanceOf(props.address);
-      const formattedData = utils.formatEther(currentTriviaBalance);
-      props.setTokenData(formattedData);
-      // TODO - hack good for now and myabe later
-      // window.location.reload();
+    const approveConfirmation = await approveTx?.wait();
+    if (approveConfirmation.blockNumber) {
+      const tx = await contractWrite.writeAsync();
+      const confirmation = await tx.wait();
+      if (confirmation.blockNumber) {
+        setPoolButton(false);
+        setDeposit(true);
+        console.log("Congrats");
+        setProcessStage(3);
+        setToastMessage("Transaction Success");
+        const currentTriviaBalance = await tokenContract.balanceOf(
+          props.address
+        );
+        const formattedData = utils.formatEther(currentTriviaBalance);
+        props.setTokenData(formattedData);
+        // TODO - hack good for now and myabe later
+        // window.location.reload();
+      } else {
+        setProcessStage(2);
+        setToastMessage(
+          "Transaction to add Token to Game bettin pool did not go through - try again"
+        );
+      }
     } else {
       setProcessStage(2);
-      setToastMessage("Transaction did not go through - try again");
+      setToastMessage("Approval did not go through - try again");
     }
   };
 

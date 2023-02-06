@@ -1,18 +1,19 @@
 const { ethers } = require("ethers");
 require("dotenv").config();
 
-const faucetJson = require(`../../contracts/deployments/localhost/Faucet.json`);
-
 let provider;
 let signer;
 let faucet;
+let faucetJson;
 
-if (process.env.NETWORK === "polygon") {
+if (process.env.NETWORK === "goerli") {
+  faucetJson = require(`../../contracts/deployments/goerli/Faucet.json`);
   provider = new ethers.providers.JsonRpcProvider(process.env.NETWORK_URL);
-  const privateKey = process.env.PRIVATE_KEY;
+  const privateKey = process.env.GOERLI_PRIVATE_KEY;
   signer = new ethers.Wallet(privateKey, provider);
 } else {
   //localhost
+  faucetJson = require(`../../contracts/deployments/localhost/Faucet.json`);
   provider = new ethers.providers.JsonRpcProvider();
   signer = provider.getSigner();
 }
