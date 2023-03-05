@@ -17,7 +17,6 @@
   "include": ["./app", "./contracts/deploy", "./contracts/test"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
-    "types": ["vitest/globals"],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
