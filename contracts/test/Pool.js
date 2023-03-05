@@ -124,7 +124,7 @@ describe("pool contract", function () {
     const depositsperGame = await pool.depositsPerGame(gameId1);
     expect(depositsperGame).to.equal(ethers.utils.parseEther("3"));
 
-    const tx4 = await pool.withdrawToWinner(account5.address);
+    const tx4 = await pool.withdrawToWinner(account5.address, gameId1);
     await tx4.wait();
 
     const account5Balance = await trivia.balanceOf(account5.address);

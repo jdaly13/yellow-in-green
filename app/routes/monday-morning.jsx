@@ -2,24 +2,39 @@ import { json } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { getUser, createUserSession } from "~/session.server";
 import { verifyLogin } from "~/models/monday-morning.server";
+import { getSpecificGame } from "~/models/game.server";
+import { getContracts } from "~/services/contracts.server";
 
 import * as React from "react";
 import WalletProvider from "~/components/WalletProvider";
 import Wrapper from "~/components/Wrapper";
+import ContractContextWrapper from "~/components/ContractContextWrapper";
 
 import { validateEmail } from "~/utils";
 
-export async function loader({ request }) {
+export async function loader({ request, params }) {
+  const network = process.env.NETWORK || "localhost";
+  console.log("gameid", params.gameid);
+
+  const game = await getSpecificGame(params.gameid);
+  console.log("GAME--", game);
+  const contractObj = getContracts(network);
   const user = await getUser(request);
-  if (user) {
-    return json({
-      user,
-    });
-  } else {
-    return json({
-      user: null,
-    });
-  }
+  // if (user) {
+  //   return json({
+  //     user,
+  //   });
+  // } else {
+  //   return json({
+  //     user: null,
+  //   });
+  // }
+  return json({
+    user,
+    game,
+    contractObj,
+    network,
+  });
 }
 
 export async function action({ request }) {
@@ -74,26 +89,29 @@ export function MondayMorning(props) {
   const questionRef = React.useRef(null);
   const answerRef = React.useRef(null);
   const gameToReferenceRef = React.useRef(null);
+  const makeGameActiveRef = React.useRef(null);
   const { address } = props;
   const previousAddress = usePrevious(address);
   const [recentGameCreated, setRecentGameCreated] = React.useState(null);
   const [recentQuestionCreated, setRecentQuestionCreated] =
     React.useState(null);
   const [currentErrorMessage, setCurrentErrorMessage] = React.useState(null);
+  const [mostCurrentGame, setMostCurrentGame] = React.useState(false);
 
   React.useEffect(() => {
     async function checkAddress() {
-      const content = await fetch(`api/portal?address=${props.address}`);
+      const content = await fetch(`api/portal?address=${address}`);
       const data = await content.json();
-      console.log("data", data);
+      console.log("data", data, address);
       if (!data?.match) {
         window.location.href = window.location.origin;
       }
     }
-    if (!address) {
-      window.location.href = window.location.origin;
-    }
+    // if (!address) {
+    //   window.location.href = window.location.origin;
+    // }
     if (address && previousAddress !== address) {
+      console.log("address", address, "previousaddress", previousAddress);
       checkAddress();
     }
   }, [address, previousAddress, props]);
@@ -110,9 +128,9 @@ export function MondayMorning(props) {
   const createGame = async (event) => {
     event.preventDefault();
     const nameOfGame = gameRef.current.value;
-    console.log("nname of Game", nameOfGame, nameOfGame.length);
+    const makeGameActive = makeGameActiveRef.current.checked;
     if (nameOfGame.length > 7) {
-      const fetchUrl = `/api/game-creation?game=${nameOfGame}`;
+      const fetchUrl = `/api/game-creation?game=${nameOfGame}&makeCurrent=${makeGameActive}`;
       const response = await fetch(fetchUrl);
       const gameJson = await response.json();
       console.log(gameJson);
@@ -157,6 +175,18 @@ export function MondayMorning(props) {
     }
   };
 
+  const getCurrentGame = async () => {
+    try {
+      const response = await fetch("/api/get-current-game");
+      const json = await response.json();
+      console.log("json--", json);
+      setMostCurrentGame(JSON.stringify(json));
+    } catch (error) {
+      console.log("ERR -", error);
+      setMostCurrentGame(JSON.stringify(false));
+    }
+  };
+
   return (
     <div className="flex min-h-full flex-col justify-center">
       <div className="mx-auto w-full max-w-md px-8">
@@ -187,13 +217,33 @@ export function MondayMorning(props) {
                   />
                 </div>
               </div>
+              {JSON.parse(mostCurrentGame) === null && (
+                <>
+                  <label for="make-active">Make Game active</label>
+                  <input
+                    name="make-active"
+                    ref={makeGameActiveRef}
+                    type="checkbox"
+                  />
+                </>
+              )}
               <button
                 type="submit"
-                className="w-full rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+                disabled={mostCurrentGame === false}
+                className="w-full rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:opacity-50"
               >
                 Create Game
               </button>
             </Form>
+            <button
+              onClick={getCurrentGame}
+              className="mt-6 w-full rounded bg-blue-500 py-2 px-4 text-white"
+            >
+              Get Current Game
+            </button>
+            {mostCurrentGame !== false && (
+              <p>Most current Game: {mostCurrentGame.toString()}</p>
+            )}
             {recentGameCreated && (
               <>
                 <h4 className="mb-2">
@@ -322,11 +372,18 @@ export function MondayMorning(props) {
 }
 
 export default function Container() {
+  const data = useLoaderData();
   return (
-    <WalletProvider>
-      <Wrapper>
-        <MondayMorning />
-      </Wrapper>
-    </WalletProvider>
+    <ContractContextWrapper
+      contracts={data.contractObj}
+      game={data.game}
+      network={data.network}
+    >
+      <WalletProvider>
+        <Wrapper>
+          <MondayMorning />
+        </Wrapper>
+      </WalletProvider>
+    </ContractContextWrapper>
   );
 }

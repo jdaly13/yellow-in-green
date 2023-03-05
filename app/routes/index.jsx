@@ -4,7 +4,7 @@ import { Link, useLoaderData } from "@remix-run/react";
 
 export async function loader({ request }) {
   const currentGame = await getCurrentGame(request);
-  console.log({ currentGame });
+
   return json(currentGame);
 }
 export default function Index() {
@@ -48,10 +48,16 @@ export default function Index() {
                       and request TRIVIA Token, no cost to you.
                     </li>
                     <li>
-                      Once you have TRIVIA token, go to{" "}
-                      <Link className="underline" to={`/game/${data.id}`}>
-                        Game
-                      </Link>
+                      Once you have TRIVIA token, visit current{" "}
+                      {data?.id ? (
+                        <Link className="underline" to={`/game/${data?.id}`}>
+                          Game
+                        </Link>
+                      ) : (
+                        <span>
+                          Game (currently there is no game ... stay tuned)
+                        </span>
+                      )}
                     </li>
                     <li>Connect Wallet</li>
                     <li>Add Your Ante (TRIVIA token) to the pot</li>

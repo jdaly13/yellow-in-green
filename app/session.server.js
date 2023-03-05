@@ -50,7 +50,7 @@ export async function createUserSession({ request, userId }) {
     {
       headers: {
         "Set-Cookie": await sessionStorage.commitSession(session, {
-          maxAge: 60,
+          maxAge: 60 * 60,
         }),
       },
     }

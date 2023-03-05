@@ -30,7 +30,7 @@ export default function BalanceInfo({
     address: contracts.poolJson.address,
     abi: contracts.poolJson.abi,
     functionName: "depositPerUserperGame",
-    args: [game.id, address],
+    args: [game?.id, address],
   });
 
   useEffect(() => {
@@ -52,10 +52,11 @@ export default function BalanceInfo({
     }
   }, [activePlayer, deposit, setDeposit]);
 
+  // TODO REFACTOR
   return (
     <div>
       <h3>You have {tokenData} TRIVIA Token</h3>
-      {!deposit && tokenData < 1.0 && (
+      {!deposit && tokenData < 1.0 && game?.current && (
         <>
           <h3>You need at least 1 Trivia Token to play the game</h3>
           <p>
@@ -67,7 +68,7 @@ export default function BalanceInfo({
           </p>
         </>
       )}
-      {poolButton && tokenData >= 1.0 && !deposit && (
+      {poolButton && tokenData >= 1.0 && !deposit && game?.current && (
         <PoolButton
           setPoolButton={setPoolButton}
           address={address}
@@ -92,7 +93,7 @@ export function PoolButton(props) {
     address: contracts.poolJson.address,
     abi: contracts.poolJson.abi,
     functionName: "deposit",
-    args: [game.id],
+    args: [game?.id],
     onError: (err) => {
       console.error(err);
     },
@@ -147,7 +148,7 @@ export function PoolButton(props) {
         const formattedData = utils.formatEther(currentTriviaBalance);
         props.setTokenData(formattedData);
         // TODO - hack good for now and myabe later
-        // window.location.reload();
+        window.location.reload();
       } else {
         setProcessStage(2);
         setToastMessage(
