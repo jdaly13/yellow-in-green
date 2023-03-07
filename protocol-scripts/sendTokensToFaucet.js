@@ -1,3 +1,4 @@
+// TODO
 const { ethers } = require("ethers");
 require("dotenv").config();
 
@@ -8,7 +9,7 @@ console.log(faucetJson.address, triviaToken.address);
 
 let provider;
 let signer;
-let faucet;
+let trivia;
 
 if (process.env.NETWORK === "goerli") {
   provider = new ethers.providers.JsonRpcProvider(process.env.NETWORK_URL);
@@ -20,18 +21,22 @@ if (process.env.NETWORK === "goerli") {
   signer = provider.getSigner();
 }
 try {
-  faucet = new ethers.Contract(faucetJson.address, faucetJson.abi, signer);
+  trivia = new ethers.Contract(triviaToken.address, triviaToken.abi, signer);
 } catch (e) {
   console.log("ERROR", e);
 }
 
-console.log({ faucet });
+console.log({ trivia });
 
 async function main() {
   try {
-    const balance = await faucet.balance();
-    console.log("balance", ethers.utils.formatEther(balance));
-    const tx = await faucet.fund("0xA12C13bCdfe2C6E2dFDA3Ea1767e0d8f93817Aa2");
+    // const balance = await faucet.balance();
+    // console.log("balance", ethers.utils.formatEther(balance));
+    // const tx = await faucet.fund("0xA12C13bCdfe2C6E2dFDA3Ea1767e0d8f93817Aa2");
+    const tx = await trivia.transfer(
+      faucetJson.address,
+      ethers.utils.parseEther("20")
+    );
 
     const receipt = await tx.wait();
     console.log("receipt", receipt);

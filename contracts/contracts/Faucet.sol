@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -22,12 +22,12 @@ contract Faucet is Ownable {
   }
 
   function fund(address _to) public {
-    require(block.timestamp > lockTime[msg.sender], "lock time has not expired. Please try again later");
+    require(block.timestamp > lockTime[_to], "lock time has not expired. Please try again later");
     require(balance() > amount, "Not enough token funds in the faucet");
 
     token.transfer(address(uint160(_to)), amount);
 
-    lockTime[msg.sender] = block.timestamp + frequency;
+    lockTime[_to] = block.timestamp + frequency;
     emit funded(amount);
   }
 

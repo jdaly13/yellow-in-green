@@ -6,11 +6,10 @@ module.exports = async (hre) => {
   const triviaDeployment = await deployments.get("TriviaToken");
   const amount = ethers.utils.parseEther("1.0");
 
-  const secondsInDay = 86400;
-  await deploy("Faucet", {
+  await deploy("Pool", {
     from: deployer,
     log: true,
-    args: [triviaDeployment.address, amount, secondsInDay],
+    args: [triviaDeployment.address, amount],
   });
 };
-module.exports.tags = ["Faucet"];
+module.exports.tags = ["Pool"];

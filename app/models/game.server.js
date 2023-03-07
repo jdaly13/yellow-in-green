@@ -13,6 +13,7 @@ export async function getCurrentGame() {
 }
 
 export async function getSpecificGame(id) {
+  console.log("ID", id);
   return prisma.game.findFirst({
     where: {
       id,
@@ -122,7 +123,7 @@ export async function declareWinner(game, userId) {
 
   console.log(user);
 
-  return prisma.game.update({
+  const winnerUpdate = await prisma.game.update({
     where: {
       id: game,
     },
@@ -131,14 +132,26 @@ export async function declareWinner(game, userId) {
       current: false,
     },
   });
+  return {
+    winnerUpdate,
+    winnerAddress: user.address,
+  };
+}
+
+export async function getAllWinlessGames() {
+  return prisma.game.findMany({
+    where: {
+      winnerId: null,
+    },
+  });
 }
 
 export async function checkAndDeclareWinner(id, game, submission) {
   const isWinner = await checkWinner(id, game);
   if (isWinner) {
-    const declaredWinner = await declareWinner(game, id);
-    if (declareWinner) {
-      return json(declaredWinner);
+    const { winnerUpdate } = await declareWinner(game, id);
+    if (winnerUpdate) {
+      return json(winnerUpdate);
     } else {
       return json({
         error: "questions and submissions matched up but not declared winner",
@@ -153,4 +166,28 @@ export async function checkAndDeclareWinner(id, game, submission) {
       });
     }
   }
+}
+
+export async function createGame(game, makeActive) {
+  const active = makeActive === "true" ? true : false;
+  return prisma.game.create({
+    data: {
+      name: game,
+      current: active,
+    },
+  });
+}
+
+export async function createQuestion(questionText, answerText, gameId) {
+  return prisma.question.create({
+    data: {
+      content: questionText,
+      gameId: gameId,
+      answer: {
+        create: {
+          hash: await bcrypt.hash(answerText, 10),
+        },
+      },
+    },
+  });
 }

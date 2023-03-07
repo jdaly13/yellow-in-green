@@ -1,8 +1,9 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-deploy");
 require("@nomiclabs/hardhat-ethers");
+require("@nomiclabs/hardhat-etherscan");
 
-require("dotenv");
+require("dotenv").config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -24,6 +25,12 @@ module.exports = {
         auto: false,
         interval: 4000,
       },
+    },
+  },
+  etherscan: {
+    apiKey: {
+      mainnet: process.env.ETHERSCAN_API_KEY || "",
+      goerli: process.env.ETHERSCAN_API_KEY || "",
     },
   },
   namedAccounts: {
