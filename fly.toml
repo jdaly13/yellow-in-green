@@ -1,4 +1,4 @@
-app = "trivia-new-76c5"
+app = "trivia-new-76c5-staging"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = [ ]
