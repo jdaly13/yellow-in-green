@@ -81,3 +81,5 @@ for example algorand you would get that nft using indexer and then transfer that
 
 Interesting article
 https://medium.com/coinmonks/how-to-find-your-nft-on-ipfs-e51bc5e7c8a1
+
+Process
