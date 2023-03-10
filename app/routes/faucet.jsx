@@ -28,6 +28,8 @@ export default function Index() {
   const [toastMessage, setToastMessage] = React.useState("");
   const [processStage, setProcessStage] = React.useState(0);
 
+  const [tokenAddress, setTokenAddress] = React.useState("");
+
   React.useEffect(() => {
     if (fetcher.state === "submitting") {
       console.log("submitting", fetcher);
@@ -44,6 +46,7 @@ export default function Index() {
         setButtonDisabled(false);
         setProcessStage(3);
         setToastMessage("Success Check your wallet for token");
+        setTokenAddress(fetcher.data?.tokenAddress);
       }
       setTimeout(() => {
         setProcessStage(0);
@@ -68,7 +71,7 @@ export default function Index() {
   };
   return (
     <>
-      <main className="relative min-h-screen flex-col sm:flex sm:items-center sm:justify-center">
+      <main className="relative flex min-h-screen flex-col items-center justify-center px-2 lg:px-0">
         {message && (
           <div>
             <h3 className="text-center text-xl">{message}</h3>
@@ -80,7 +83,7 @@ export default function Index() {
               Yellow in Green TRIVIA Faucet
             </span>
           </h1>
-          <h2 className="mt-3 text-primary">
+          <h2 className="mt-3 text-center text-primary">
             Once you have received token go to current{" "}
             <Link className="underline" to={`/game/${data.id}`}>
               Game
@@ -93,11 +96,11 @@ export default function Index() {
         <Form
           onSubmit={checkAddressAndSend}
           method="post"
-          className="wrapper mx-auto flex w-5/12 text-left"
+          className="wrapper mx-auto flex w-full flex-wrap text-left lg:w-5/12 lg:flex-nowrap"
         >
           <input
             onChange={(e) => {}}
-            className=" input-bordered input-accent input input-md mr-2 w-3/4 w-full  focus:outline-none disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:opacity-50"
+            className=" input-bordered input-accent input input-md w-full focus:outline-none disabled:border-slate-200  disabled:bg-slate-50 disabled:text-slate-500 disabled:opacity-50 lg:mr-2 lg:w-full"
             type="text"
             placeholder="Enter your wallet address"
             ref={inputEl}
@@ -105,11 +108,25 @@ export default function Index() {
           <button
             type="submit"
             disabled={buttonDisabled}
-            className="btn-secondary btn"
+            className="btn-secondary btn mt-4 w-full lg:mt-0 lg:w-auto"
           >
             Submit
           </button>
         </Form>
+        {tokenAddress && (
+          <h3 className="text-md my-4 w-full break-words text-center">
+            Add this token address {tokenAddress} to your wallet, go{" "}
+            <a
+              className="underline"
+              href="https://support.ledger.com/hc/en-us/articles/6375103346077-Add-custom-tokens-to-MetaMask"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Here
+            </a>{" "}
+            for directions on adding tokens using Metamask
+          </h3>
+        )}
       </main>
       {processStage > 0 && (
         <div className="toast-end toast">

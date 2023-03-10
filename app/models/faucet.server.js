@@ -5,15 +5,18 @@ let provider;
 let signer;
 let faucet;
 let faucetJson;
+let triviaJson;
 
 if (process.env.NETWORK === "goerli") {
   faucetJson = require(`../../contracts/deployments/goerli/Faucet.json`);
+  triviaJson = require("../../contracts/deployments/goerli/TriviaToken.json");
   provider = new ethers.providers.JsonRpcProvider(process.env.NETWORK_URL);
   const privateKey = process.env.GOERLI_PRIVATE_KEY;
   signer = new ethers.Wallet(privateKey, provider);
 } else {
   //localhost
   faucetJson = require(`../../contracts/deployments/localhost/Faucet.json`);
+  triviaJson = require("../../contracts/deployments/localhost/TriviaToken.json");
   provider = new ethers.providers.JsonRpcProvider();
   signer = provider.getSigner();
 }
@@ -35,6 +38,7 @@ export async function makeItRain(address) {
     return {
       receipt,
       balance,
+      tokenAddress: triviaJson.address,
     };
   } catch (e) {
     return {

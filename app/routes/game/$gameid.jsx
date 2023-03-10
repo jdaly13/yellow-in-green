@@ -244,7 +244,7 @@ function GameBody(props) {
                 />
               </svg>
               <span className="uppercase">
-                Congrats You won The Game you will be receiving tokens soon!
+                Congrats You won The Game - Claim your prize below!
               </span>
             </div>
           </div>
@@ -278,56 +278,14 @@ function GameBody(props) {
 
   return (
     <>
-      <section className="mx-auto mb-6 flex flex-col justify-center text-center text-secondary-content">
-        {errorAnswer && (
-          <div className="alert alert-error mb-4 shadow-lg">
-            <div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 flex-shrink-0 stroke-current"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>Error! Wrong Answer to Question</span>
-            </div>
-          </div>
-        )}
-
-        {successMessage && (
-          <div className="alert alert-success shadow-lg">
-            <div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 flex-shrink-0 stroke-current"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>{successMessage}</span>
-            </div>
-          </div>
-        )}
-
+      <section className="mx-auto mb-6 flex flex-col justify-center px-4 text-center text-secondary-content lg:px-0">
         <h1 className="mb-8 text-center text-4xl uppercase">
           {data.game?.name}
         </h1>
         {checkFinalStatus()}
 
         {!isConnected && !deposit && data.game?.current && (
-          <h1 className="mx-auto mb-8 w-1/2 text-lg uppercase text-error">
+          <h1 className="mx-auto mb-8 w-full text-lg uppercase text-error lg:w-1/2">
             Connect your wallet and Add Your TRIVIA token to see full list of
             questions and your chance to earn more TRIVIA Tokens and a free NFT
           </h1>
@@ -352,20 +310,20 @@ function GameBody(props) {
                       onChange={(e) => {
                         updateValue(e, index);
                       }}
-                      className="input-bordered input-accent input input-md mr-2 w-full max-w-xs focus:outline-none disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:opacity-50"
+                      className="input-bordered input-accent input input-md w-full focus:outline-none disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:opacity-50 lg:mr-2 lg:max-w-xs"
                       type="text"
                       name={question.id}
                       disabled={question.answer}
                     ></input>
                     <button
                       type="submit"
-                      className="btn-secondary btn"
+                      className="btn-secondary btn mt-4 w-full lg:mt-0 lg:w-auto"
                       disabled={question.answer}
                     >
                       Submit
                     </button>
                     {question.answer && (
-                      <h1 className="my-4 text-primary">
+                      <h1 className="my-4 text-center text-primary lg:text-left">
                         You have answered this question correctly
                       </h1>
                     )}
@@ -413,6 +371,51 @@ function GameBody(props) {
               </div>
             </div>
           )}
+        </div>
+      )}
+      {errorAnswer && (
+        <div className="toast-end toast">
+          <div className="alert alert-error mb-4 shadow-lg">
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 flex-shrink-0 stroke-current"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>Error! Wrong Answer to Question</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="toast-end toast">
+          <div className="alert alert-success shadow-lg">
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 flex-shrink-0 stroke-current"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>{successMessage}</span>
+            </div>
+          </div>
         </div>
       )}
     </>

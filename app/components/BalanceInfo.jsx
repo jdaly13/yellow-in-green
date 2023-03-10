@@ -55,11 +55,15 @@ export default function BalanceInfo({
   // TODO REFACTOR
   return (
     <div>
-      <h3>You have {tokenData} TRIVIA Token</h3>
+      <h3 className="text-center lg:text-left">
+        You have {tokenData} TRIVIA Token
+      </h3>
       {!deposit && tokenData < 1.0 && game?.current && (
         <>
-          <h3>You need at least 1 Trivia Token to play the game</h3>
-          <p>
+          <h3 className="text-center lg:text-left">
+            You need at least 1 Trivia Token to play the game
+          </h3>
+          <p className="text-center lg:text-left">
             visit the{" "}
             <Link className="underline" to="/faucet">
               {" "}
@@ -76,7 +80,9 @@ export default function BalanceInfo({
           setDeposit={setDeposit}
         />
       )}
-      {deposit && <p>You are currently playing the game</p>}
+      {deposit && (
+        <p className="font-bold">You are currently playing the game</p>
+      )}
     </div>
   );
 }
@@ -165,7 +171,7 @@ export function PoolButton(props) {
     <>
       <button
         disabled={buttonDisabled}
-        className="btn-primary btn my-2 block py-2"
+        className="btn-primary btn my-2 mx-auto block py-2 lg:mx-0"
         onClick={buttonClicked}
       >
         Play Game
