@@ -65,6 +65,13 @@ export default function Index() {
                       First Player to answer all questions correctly recieve the
                       pot of TRIVIA Tokens and an NFT for that Game
                     </li>
+                    <li>
+                      For more info and FAQ visit{" "}
+                      <Link className="underline" to={`info`}>
+                        Info
+                      </Link>{" "}
+                      page
+                    </li>
                   </ul>
                 </div>
               </div>
