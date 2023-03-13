@@ -53,7 +53,10 @@ https://medium.com/@prashantramnyc/difference-between-session-cookies-vs-jwt-jso
 Wagmi docs version
 https://0.7.x.wagmi.sh/docs/WagmiConfig
 
-Tutoria - sports betting daPP - https://medium.com/coinmonks/create-a-sports-betting-dapp-on-the-ethereum-blockchain-part-1-1f69f908b939
+Wallet Connect Web3 modal
+https://docs.walletconnect.com/2.0/web3modal/react/installation
+
+Tutorial - sports betting daPP - https://medium.com/coinmonks/create-a-sports-betting-dapp-on-the-ethereum-blockchain-part-1-1f69f908b939
 
 Hardhat Deploy and Etherscan verify
 https://blog.chain.link/how-to-verify-smart-contract-on-etherscan-hardhat/
@@ -81,6 +84,8 @@ for example algorand you would get that nft using indexer and then transfer that
 
 Interesting article
 https://medium.com/coinmonks/how-to-find-your-nft-on-ipfs-e51bc5e7c8a1
+
+## External Scripts
 
 // Script using for testing purposes to test a backend call of 5 seconds
 

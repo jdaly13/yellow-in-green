@@ -36,10 +36,10 @@ export default function Index() {
                   <h2 className="mb-4 text-center text-xl">Inspiration</h2>
                   <p>
                     Most Trivia games discourage users to search the internet,
-                    our game its almost a requirement. We seek answers to
-                    obscure fun questions, The information is obscure so in our
-                    question we try to give small clues. It's a trivia game with
-                    a scavenger hunt component.
+                    our game its almost a requirement. We seek answers to to
+                    questions that are fun and obscure. The question itself
+                    gives small clues. It's a trivia game with a scavenger hunt
+                    component.
                   </p>
                 </div>
                 <div className="my-4">
@@ -51,8 +51,8 @@ export default function Index() {
                   </h2>
                   <ul className="ml-8 list-outside list-decimal">
                     <li>
-                      You are allowed 30 attempts to answer each question before
-                      you are disqualified.
+                      You are allowed 90 total attempts to answer all questions
+                      before you are disqualified.
                     </li>
                     <li>
                       The winner of the Game will receive all the tokens added
