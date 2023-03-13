@@ -23,11 +23,10 @@ export async function loader({ params }) {
 
 export async function action({ request }) {
   const formData = await request.formData();
-  const answer = formData.get("data");
+  const answer = formData.get("data").toLowerCase();
   const question = formData.get("_question");
   const user = formData.get("user");
   const gameId = formData.get("gameId");
-  console.log("data", answer, question, user, gameId);
   const isValid = await checkAnswer(question, answer);
   if (!isValid) {
     return json({
@@ -65,7 +64,6 @@ export function usePrevious(value) {
 
 function GameBody(props) {
   const { address, isConnected, deposit } = props;
-  console.log("deposit", deposit);
   const data = useLoaderData();
   const fetcher = useFetcher();
   const [answerObj, setAnswerObj] = React.useState({});
@@ -90,7 +88,6 @@ function GameBody(props) {
       const fetchUrl = `/api/user?address=${address}&game=${data.game.id}`;
       const response = await fetch(fetchUrl);
       const content = await response.json();
-      console.log("testing !!!!!!!!", content);
       setUser(content);
     }
     upsertUser();
@@ -98,7 +95,6 @@ function GameBody(props) {
 
   React.useEffect(() => {
     if (user) {
-      console.log("user use effect", user.submissions, questions);
       const { submissions } = user;
 
       /* REFACTOR */

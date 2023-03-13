@@ -24,8 +24,8 @@ export default function Index() {
                   Yellow in Green
                 </span>
               </h1>
-              <span className="mx-auto mt-4 block w-full text-center text-4xl font-extrabold uppercase tracking-tight text-accent drop-shadow-md md:max-w-[16rem]">
-                Trivia Game
+              <span className="mx-auto mt-4 block w-full text-center text-xl font-extrabold tracking-tight text-accent drop-shadow-md ">
+                A simple trivia game with a scavenger hunt component
               </span>
               <div className="howtoplay mx-auto my-8 w-full text-base-content lg:w-1/2 ">
                 <div className="my-4">

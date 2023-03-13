@@ -82,4 +82,12 @@ for example algorand you would get that nft using indexer and then transfer that
 Interesting article
 https://medium.com/coinmonks/how-to-find-your-nft-on-ipfs-e51bc5e7c8a1
 
-This is aggravating
+// Script using for testing purposes to test a backend call of 5 seconds
+
+```
+return new Promise((resolve) => {
+  setTimeout(resolve, 5000);
+}).then(() => {
+  return json({ test: "test" });
+});
+```

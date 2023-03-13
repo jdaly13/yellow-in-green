@@ -36,7 +36,6 @@ export default function WalletProvider({ children }) {
   const chainToUse = chains.filter((chain) => {
     return chain.network === network;
   });
-  console.log(chainToUse);
   // Wagmi client
   // const { provider } = configureChains(chains, [
   //   infuraProvider({ apiKey: infuraID }),

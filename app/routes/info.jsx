@@ -33,6 +33,16 @@ export default function Index() {
               </span>
               <div className="howtoplay mx-auto my-8 w-full text-base-content lg:w-1/2 ">
                 <div className="my-4">
+                  <h2 className="mb-4 text-center text-xl">Inspiration</h2>
+                  <p>
+                    Most Trivia games discourage users to search the internet,
+                    our game its almost a requirement. We seek answers to
+                    obscure fun questions, The information is obscure so in our
+                    question we try to give small clues. It's a trivia game with
+                    a scavenger hunt component.
+                  </p>
+                </div>
+                <div className="my-4">
                   <h2 className="mb-4 text-center text-xl">Requirements</h2>
                 </div>
                 <div className="my-4">
