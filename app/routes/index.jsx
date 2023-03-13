@@ -4,8 +4,12 @@ import { Link, useLoaderData } from "@remix-run/react";
 
 export async function loader({ request }) {
   const currentGame = await getCurrentGame(request);
+  const network = process.env.NETWORK || "localhost";
 
-  return json(currentGame);
+  return json({
+    currentGame,
+    network,
+  });
 }
 export default function Index() {
   const data = useLoaderData();
@@ -32,7 +36,10 @@ export default function Index() {
                   <h2 className="mb-4 text-center text-xl">Requirements</h2>
                   <ul className="ml-6 list-outside list-disc">
                     <li>Ethereum Wallet like Metamask or Brave Walet</li>
-                    <li>Small amount of Ethereum (Gas costs)</li>
+                    <li>
+                      Small amount of {data.network} Ethereum to cover
+                      transaction costs
+                    </li>
                   </ul>
                 </div>
                 <div className="my-4">
@@ -49,8 +56,11 @@ export default function Index() {
                     </li>
                     <li>
                       Once you have TRIVIA token, visit current{" "}
-                      {data?.id ? (
-                        <Link className="underline" to={`/game/${data?.id}`}>
+                      {data?.currentGame?.id ? (
+                        <Link
+                          className="underline"
+                          to={`/game/${data.currentGame.id}`}
+                        >
                           Game
                         </Link>
                       ) : (
