@@ -106,7 +106,7 @@ export default function Index() {
                         rel="noreferrer"
                         className="underline"
                       >
-                        Where to get ETH
+                        Where to get/purchase ETH
                       </a>
                     </li>
                   </ul>
