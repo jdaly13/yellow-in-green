@@ -96,3 +96,12 @@ return new Promise((resolve) => {
   return json({ test: "test" });
 });
 ```
+
+Wallet Connect - https://cloud.walletconnect.com/app
+
+## ICONS
+
+https://heroicons.com/
+
+TESTNETS
+Goerli Fauces - https://goerli.etherscan.io/address/0x980aD1E1aBca7994e46702fE18A4bAF009081746

@@ -27,6 +27,10 @@ export default function Index() {
   const [toastMessage, setToastMessage] = React.useState("");
   const [processStage, setProcessStage] = React.useState(0);
 
+  function copyText() {
+    navigator.clipboard.writeText(tokenAddress);
+  }
+
   const [tokenAddress, setTokenAddress] = React.useState("");
   const [modalIsOpen, setModalOpen] = React.useState(false);
 
@@ -50,6 +54,7 @@ export default function Index() {
       }
     }
   }, [fetcher]);
+
   const checkAddressAndSend = (event) => {
     event.preventDefault();
     const inputVal = inputEl.current.value;
@@ -71,6 +76,7 @@ export default function Index() {
       setToastMessage("Please enter a valid wallet address");
     }
   };
+
   React.useEffect(() => {
     document
       .querySelector("#faucet-modal")
@@ -117,16 +123,39 @@ export default function Index() {
         </Form>
         {tokenAddress && (
           <h3 className="text-md my-4 w-full break-words text-center">
-            Add this token address {tokenAddress} to your wallet, go{" "}
-            <a
-              className="underline"
-              href="https://support.ledger.com/hc/en-us/articles/6375103346077-Add-custom-tokens-to-MetaMask"
-              target="_blank"
-              rel="noreferrer"
+            Add this token address {tokenAddress}
+            <span
+              data-tip="copy address"
+              onClick={copyText}
+              className="tooltip tooltip-info cursor-pointer"
             >
-              Here
-            </a>{" "}
-            for directions on adding tokens using Metamask
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="inline h-6 w-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
+                />
+              </svg>
+            </span>
+            to your wallet.
+            <span className="block">
+              <a
+                className="underline"
+                href="https://support.ledger.com/hc/en-us/articles/6375103346077-Add-custom-tokens-to-MetaMask"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Visit Here
+              </a>{" "}
+              for directions on adding tokens using Metamask
+            </span>
           </h3>
         )}
       </main>
