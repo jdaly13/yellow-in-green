@@ -31,7 +31,7 @@ export async function makePayment(address, gameId) {
     // if (isGameActive !== 0) {
     //   throw new Error("Game is not active")
     // }
-    const tx = await pool.withdrawToWinner(address); // add gameID next launch
+    const tx = await pool.withdrawToWinner(address, gameId); // add gameID next launch
 
     const receipt = await tx.wait();
     console.log("receipt", receipt);

@@ -182,6 +182,7 @@ function GameBody(props) {
     const userID = user.id;
     const gameID = data.game?.id;
     setButtonDisabled(true);
+    setPrizeModalOpen(true);
     setProcessStage(1);
     console.log({ userID }, { gameID }, { address });
     try {
@@ -190,7 +191,7 @@ function GameBody(props) {
       );
       const json = await repsonse.json();
       console.log({ json });
-      setButtonDisabled(true);
+      setButtonDisabled(false);
       setProcessStage(3);
       setToastMessage("Success Check your wallet for prize");
       setTimeout(() => {
@@ -200,7 +201,9 @@ function GameBody(props) {
       console.log(error);
       setButtonDisabled(false);
       setProcessStage(2);
-      setToastMessage(`Transaction did not happen - ${fetcher.data.e.reason}`);
+      setToastMessage(
+        `Transaction did not happen - ${fetcher?.data?.e?.reason}`
+      );
     }
     return null;
   };
