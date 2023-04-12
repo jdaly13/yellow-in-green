@@ -75,7 +75,33 @@ export async function checkAnswer(question, answer) {
   return isValid;
 }
 
+export async function createIncorrectSubmission(
+  user,
+  question,
+  answer,
+  gameId
+) {
+  return prisma.indecentProposal.create({
+    data: {
+      answer: answer,
+      createdById: user,
+      questionId: question,
+      gameId,
+    },
+  });
+}
+
+export async function getIncorrectSubmissionsByUserAndGameId(user, gameId) {
+  return prisma.indecentProposal.count({
+    where: {
+      createdById: user,
+      gameId: gameId,
+    },
+  });
+}
+
 export async function createUserSubmission(user, question, answer, gameId) {
+  //TODO call getIncorrectSubmissionsByUserAndGameId to make sure user can't submit if they have already surpassed limit
   const hashedAnswer = await bcrypt.hash(answer, 10);
   return prisma.submission.create({
     data: {

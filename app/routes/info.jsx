@@ -52,7 +52,7 @@ export default function Index() {
                   </h2>
                   <ul className="ml-8 list-outside list-decimal">
                     <li>
-                      You are allowed 90 total attempts to answer all questions
+                      You are allowed 30 total attempts to answer all questions
                       before you are disqualified.
                     </li>
                     <li>

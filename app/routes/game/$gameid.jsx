@@ -7,8 +7,11 @@ import {
   checkAnswer,
   createUserSubmission,
   checkAndDeclareWinner,
+  createIncorrectSubmission,
+  getIncorrectSubmissionsByUserAndGameId,
 } from "~/models/game.server";
 import { getContracts } from "~/services/contracts.server";
+import { TOTAL_MAXIMUM_INCORRECT_ANSWERS } from "~/utils";
 
 import ContractContextWrapper from "~/components/ContractContextWrapper";
 import WalletProvider from "~/components/WalletProvider";
@@ -29,8 +32,21 @@ export async function action({ request }) {
   const gameId = formData.get("gameId");
   const isValid = await checkAnswer(question, answer);
   if (!isValid) {
+    const response = await createIncorrectSubmission(
+      user,
+      question,
+      answer,
+      gameId
+    );
+    console.log("incorrect response", response);
+    const numberOfIncorrectSubmissions =
+      await getIncorrectSubmissionsByUserAndGameId(user, gameId);
+    const attemptsRemaining =
+      TOTAL_MAXIMUM_INCORRECT_ANSWERS - numberOfIncorrectSubmissions;
     return json({
       answer: "invalid",
+      attemptsRemaining: attemptsRemaining,
+      validPlayer: attemptsRemaining > 1,
     });
   }
   const submission = await createUserSubmission(user, question, answer, gameId);
@@ -79,6 +95,8 @@ function GameBody(props) {
 
   const [prizeModalOpen, setPrizeModalOpen] = React.useState(false);
 
+  const [disableGame, setDisableGame] = React.useState(false);
+
   if (
     address &&
     deposit & (previousDepositState !== deposit) &&
@@ -96,6 +114,9 @@ function GameBody(props) {
   React.useEffect(() => {
     if (user) {
       const { submissions } = user;
+      if (user?.invalidSubmissions.length >= TOTAL_MAXIMUM_INCORRECT_ANSWERS) {
+        setDisableGame(true);
+      }
 
       /* REFACTOR */
       const mapped = questions.map((question) => {
@@ -120,13 +141,13 @@ function GameBody(props) {
       console.log("mapped", mapped);
       setQuestions(mapped);
     }
-  }, [user]);
+  }, [questions, user]);
 
   React.useEffect(() => {
     if (errorAnswer) {
       setTimeout(() => {
         setAnswerError(false);
-      }, 3000);
+      }, 4000);
     }
   }, [errorAnswer]);
 
@@ -136,8 +157,13 @@ function GameBody(props) {
     }
     if (fetcher.type === "done" && fetcher.data) {
       console.log("fetcherdata", fetcher.data);
+      if (!fetcher.data.validPlayer) {
+        setDisableGame(true);
+      }
       if (fetcher.data.answer === "invalid") {
-        setAnswerError(true);
+        setAnswerError(
+          `Incorrect Answer to question, you have ${fetcher.data.attemptsRemaining} attempts remaining`
+        );
       }
       if (fetcher.data?.questionId) {
         const filtered = questions.map((question) => {
@@ -278,7 +304,13 @@ function GameBody(props) {
             questions and your chance to earn more TRIVIA Tokens and a free NFT
           </h1>
         )}
+        {disableGame && (
+          <p className="text-error">
+            You have maxed out the number of attempts for this game
+          </p>
+        )}
         {data.game?.current &&
+          !disableGame &&
           !data.game.winnerId &&
           questions.map((question, index) => {
             return (
@@ -412,7 +444,7 @@ function GameBody(props) {
                   d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span>Error! Wrong Answer to Question</span>
+              <span>{errorAnswer}</span>
             </div>
           </div>
         </div>

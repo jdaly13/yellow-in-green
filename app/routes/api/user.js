@@ -21,6 +21,11 @@ export async function loader({ request }) {
           gameId: game,
         },
       },
+      invalidSubmissions: {
+        where: {
+          gameId: game,
+        },
+      },
     },
   });
 }
