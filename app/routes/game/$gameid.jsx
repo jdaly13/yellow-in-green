@@ -79,7 +79,7 @@ function GameBody(props) {
   const [answerObj, setAnswerObj] = React.useState({});
   const [user, setUser] = React.useState("");
   const [errorAnswer, setAnswerError] = React.useState(false);
-  const [questions, setQuestions] = React.useState(data.game?.questions);
+  const [questions, setQuestions] = React.useState([]);
 
   const previousDepositState = usePrevious(deposit);
 
@@ -109,7 +109,7 @@ function GameBody(props) {
       }
 
       /* REFACTOR */
-      const mapped = questions.map((question) => {
+      const mapped = data.game?.questions.map((question) => {
         console.log({ question });
         let match = false;
         for (const sub of submissions) {
@@ -129,9 +129,10 @@ function GameBody(props) {
         return question;
       });
       console.log("mapped", mapped);
+
       setQuestions(mapped);
     }
-  }, [questions, user]);
+  }, [user]);
 
   React.useEffect(() => {
     if (errorAnswer) {
@@ -154,6 +155,7 @@ function GameBody(props) {
         setAnswerError(
           `Incorrect Answer to question, you have ${fetcher.data.attemptsRemaining} attempts remaining`
         );
+        return;
       }
       if (fetcher.data?.questionId) {
         const filtered = questions.map((question) => {
@@ -162,6 +164,7 @@ function GameBody(props) {
           }
           return question;
         });
+        console.log({ filtered });
         setQuestions(filtered);
       }
     }
@@ -302,6 +305,8 @@ function GameBody(props) {
         {data.game?.current &&
           !disableGame &&
           !data.game.winnerId &&
+          deposit &&
+          isConnected &&
           questions.map((question, index) => {
             return (
               <Form
@@ -311,39 +316,47 @@ function GameBody(props) {
                 onSubmit={submitForm}
                 method="post"
               >
-                {deposit && isConnected ? (
-                  <div className="text-left">
-                    <div className="mb-6 block max-w-md text-left ">
-                      {question.content}
-                    </div>
-                    <input
-                      onChange={(e) => {
-                        updateValue(e, index);
-                      }}
-                      className="input-bordered input-accent input input-md w-full focus:outline-none disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:opacity-50 lg:mr-2 lg:max-w-xs"
-                      type="text"
-                      name={question.id}
-                      disabled={question.answer}
-                    ></input>
-                    <button
-                      type="submit"
-                      className="btn-secondary btn mt-4 w-full lg:mt-0 lg:w-auto"
-                      disabled={question.answer}
-                    >
-                      Submit
-                    </button>
-                    {question.answer && (
-                      <h1 className="my-4 text-center text-primary lg:text-left">
-                        You have answered this question correctly
-                      </h1>
-                    )}
+                <div className="text-left lg:min-w-[28rem]">
+                  <div className="mb-6 block min-w-fit max-w-md text-left ">
+                    {question.content}
                   </div>
-                ) : (
-                  <div className="mb-6 block max-w-md text-left ">
-                    {question.content.split(" ").splice(0, 5).join(" ")} ...
-                  </div>
-                )}
+                  <input
+                    onChange={(e) => {
+                      updateValue(e, index);
+                    }}
+                    className="input-bordered input-accent input input-md w-full focus:outline-none disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:opacity-50 lg:mr-2 lg:max-w-xs"
+                    type="text"
+                    name={question.id}
+                    disabled={question.answer}
+                  ></input>
+                  <button
+                    type="submit"
+                    className="btn-secondary btn mt-4 w-full lg:mt-0 lg:w-auto"
+                    disabled={question.answer}
+                  >
+                    Submit
+                  </button>
+                  {question.answer && (
+                    <h1 className="my-4 text-center text-primary lg:text-left">
+                      You have answered this question correctly
+                    </h1>
+                  )}
+                </div>
               </Form>
+            );
+          })}
+        {data.game?.current &&
+          !disableGame &&
+          !data.game.winnerId &&
+          (!deposit || !isConnected) &&
+          data.game?.questions.map((question) => {
+            return (
+              // eslint-disable-next-line react/jsx-key
+              <div className="wrapper mx-auto mb-12 flex flex-col">
+                <div className="mb-6 block max-w-md text-left ">
+                  {question.content.split(" ").splice(0, 5).join(" ")} ...
+                </div>
+              </div>
             );
           })}
         {!data.game && <p>This is not the game you are looking for</p>}
