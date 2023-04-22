@@ -32,13 +32,7 @@ export async function action({ request }) {
   const gameId = formData.get("gameId");
   const isValid = await checkAnswer(question, answer);
   if (!isValid) {
-    const response = await createIncorrectSubmission(
-      user,
-      question,
-      answer,
-      gameId
-    );
-    console.log("incorrect response", response);
+    await createIncorrectSubmission(user, question, answer, gameId);
     const numberOfIncorrectSubmissions =
       await getIncorrectSubmissionsByUserAndGameId(user, gameId);
     const attemptsRemaining =
@@ -46,7 +40,7 @@ export async function action({ request }) {
     return json({
       answer: "invalid",
       attemptsRemaining: attemptsRemaining,
-      validPlayer: attemptsRemaining > 1,
+      validPlayer: attemptsRemaining > 1 ? true : "notvalid",
     });
   }
   const submission = await createUserSubmission(user, question, answer, gameId);
@@ -97,11 +91,7 @@ function GameBody(props) {
 
   const [disableGame, setDisableGame] = React.useState(false);
 
-  if (
-    address &&
-    deposit & (previousDepositState !== deposit) &&
-    data.game?.id
-  ) {
+  if (address && deposit && previousDepositState !== deposit && data.game?.id) {
     async function upsertUser() {
       const fetchUrl = `/api/user?address=${address}&game=${data.game.id}`;
       const response = await fetch(fetchUrl);
@@ -157,7 +147,7 @@ function GameBody(props) {
     }
     if (fetcher.type === "done" && fetcher.data) {
       console.log("fetcherdata", fetcher.data);
-      if (!fetcher.data.validPlayer) {
+      if (fetcher.data?.validPlayer === "notvalid") {
         setDisableGame(true);
       }
       if (fetcher.data.answer === "invalid") {
