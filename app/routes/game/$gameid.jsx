@@ -86,6 +86,7 @@ function GameBody(props) {
   const [toastMessage, setToastMessage] = React.useState("");
   const [processStage, setProcessStage] = React.useState(0);
   const [buttonDisabled, setButtonDisabled] = React.useState(false);
+  const [answerButtonDisabled, setAnswerButtonDisabled] = React.useState(false);
 
   const [prizeModalOpen, setPrizeModalOpen] = React.useState(false);
 
@@ -147,6 +148,7 @@ function GameBody(props) {
       console.log("submitting", fetcher);
     }
     if (fetcher.type === "done" && fetcher.data) {
+      setAnswerButtonDisabled(false);
       console.log("fetcherdata", fetcher.data);
       if (fetcher.data?.validPlayer === "notvalid") {
         setDisableGame(true);
@@ -180,6 +182,7 @@ function GameBody(props) {
     event.preventDefault();
     console.log("DONE", event.target);
     console.log(answerObj[event.target.id]);
+    setAnswerButtonDisabled(true);
     fetcher.submit(
       {
         _question: event.target.id,
@@ -331,8 +334,8 @@ function GameBody(props) {
                   ></input>
                   <button
                     type="submit"
-                    className="btn-secondary btn mt-4 w-full lg:mt-0 lg:w-auto"
-                    disabled={question.answer}
+                    className="btn-secondary btn mt-4 w-full disabled:opacity-30 hover:disabled:opacity-30 lg:mt-0 lg:w-auto"
+                    disabled={question.answer || answerButtonDisabled}
                   >
                     Submit
                   </button>
