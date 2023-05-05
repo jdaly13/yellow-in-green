@@ -42,6 +42,7 @@
     "dotenv": "^16.0.3",
     "ethers": "^5.7.2",
     "isbot": "^3.6.3",
+    "nodemailer": "^6.9.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "remix-utils": "^4.1.0",

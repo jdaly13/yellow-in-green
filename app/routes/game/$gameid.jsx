@@ -170,7 +170,7 @@ function GameBody(props) {
         setQuestions(filtered);
       }
     }
-  }, [fetcher]);
+  }, [fetcher]); //questions
 
   React.useEffect(() => {
     document
@@ -211,14 +211,19 @@ function GameBody(props) {
       const repsonse = await fetch(
         `/api/payout?game=${gameID}&user=${userID}&address=${address}`
       );
-      const json = await repsonse.json();
-      console.log({ json });
+      const responseJson = await repsonse.json();
+      console.log({ responseJson });
       setButtonDisabled(false);
       setProcessStage(3);
-      setToastMessage("Success Check your wallet for prize");
-      setTimeout(() => {
-        setProcessStage(0);
-      }, 10000);
+      if (responseJson.success) {
+        setToastMessage("Success Check your wallet for prize");
+      } else {
+        setToastMessage(responseJson.message);
+      }
+
+      // setTimeout(() => {
+      //   setProcessStage(0);
+      // }, 10000);
     } catch (error) {
       console.log(error);
       setButtonDisabled(false);
@@ -352,10 +357,10 @@ function GameBody(props) {
           !disableGame &&
           !data.game.winnerId &&
           (!deposit || !isConnected) &&
-          data.game?.questions.map((question) => {
+          data.game?.questions.map((question, i) => {
             return (
               // eslint-disable-next-line react/jsx-key
-              <div className="wrapper mx-auto mb-12 flex flex-col">
+              <div key={i} className="wrapper mx-auto mb-12 flex flex-col">
                 <div className="mb-6 block max-w-md text-left ">
                   {question.content.split(" ").splice(0, 5).join(" ")} ...
                 </div>
@@ -370,7 +375,7 @@ function GameBody(props) {
             <div className="pending flex items-center">
               <svg
                 aria-hidden="true"
-                class="mr-2 inline h-8 w-8 animate-spin fill-green-500 text-gray-200 dark:text-gray-600"
+                className="mr-2 inline h-8 w-8 animate-spin fill-green-500 text-gray-200 dark:text-gray-600"
                 viewBox="0 0 100 101"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"

@@ -23,24 +23,32 @@ try {
   console.log("ERROR", e);
 }
 
+export async function makeSureGameIsActive(gameId) {
+  const isGameActive = await pool.isGameActive(gameId);
+  if (isGameActive === 0) {
+    //ongoing state
+    return true;
+  } else {
+    return false;
+  }
+}
+
 // TODO CHANGE WHEN LAUNCHING NEW CONTRACT
 export async function makePayment(address, gameId) {
   try {
-    // check here if game is active
-    // const isGameActive = await pool.isGameActive(gameId); should return 0 if game is in progress
-    // if (isGameActive !== 0) {
-    //   throw new Error("Game is not active")
-    // }
     const tx = await pool.withdrawToWinner(address, gameId); // add gameID next launch
 
     const receipt = await tx.wait();
     console.log("receipt", receipt);
 
     return {
+      success: true,
       receipt,
     };
   } catch (e) {
+    console.log("error", e);
     return {
+      success: false,
       e,
     };
   }

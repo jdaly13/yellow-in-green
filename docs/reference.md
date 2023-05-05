@@ -108,3 +108,5 @@ Goerli Fauces - https://goerli.etherscan.io/address/0x980aD1E1aBca7994e46702fE18
 https://goerli.etherscan.io/address/0xE2a9Cc57D7d34D71F73ACa68c3e145E4d423C233
 
 `SELECT winnerID from GAME WHERE id = "cleyxi99u0000gylt0o37nb6p";`
+NODEMAILER LINKS - EMAIL
+https://github.com/jdaly13/yellow-in-gree n/issues/18

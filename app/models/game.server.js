@@ -1,6 +1,7 @@
 import { json } from "@remix-run/server-runtime";
 import { prisma } from "~/db.server";
 import bcrypt from "bcryptjs";
+import { sendEmail } from "~/services/email.server";
 export async function getCurrentGame() {
   return prisma.game.findFirst({
     where: {
@@ -158,9 +159,21 @@ export async function declareWinner(game, userId) {
       current: false,
     },
   });
+  try {
+    await sendEmail({ gameId: game, winnerId: user.address });
+  } catch (error) {
+    console.log(error);
+    return {
+      winnerUpdate,
+      winnerAddress: user.address,
+      emailSuccess: false,
+    };
+  }
+
   return {
     winnerUpdate,
     winnerAddress: user.address,
+    emailSuccess: true,
   };
 }
 

@@ -219,7 +219,7 @@ export function MondayMorning(props) {
               </div>
               {JSON.parse(mostCurrentGame) === null && (
                 <>
-                  <label for="make-active">Make Game active</label>
+                  <label htmlFor="make-active">Make Game active</label>
                   <input
                     name="make-active"
                     ref={makeGameActiveRef}

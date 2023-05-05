@@ -133,5 +133,12 @@ describe("pool contract", function () {
     // got 3 from pool (including money back)
     // total of 4
     expect(account5Balance).to.equal(ethers.utils.parseEther("4"));
+
+    const isGameActive = await pool.isGameActive(gameId1);
+    expect(isGameActive).to.equal(1);
+
+    // if (isGameActive !== 0) {
+    //   throw new Error("Game is not active")
+    // }
   });
 });
