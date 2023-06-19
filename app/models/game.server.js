@@ -25,6 +25,10 @@ export async function getSpecificGame(id) {
   });
 }
 
+export async function getAllGames() {
+  return prisma.game.findMany();
+}
+
 export async function checkAnswers(data) {
   const array = [];
   for (var i = 0; i < data.length; i++) {
@@ -54,8 +58,8 @@ export async function checkAnswers(data) {
     array.push({
       [data[i][questionWithAnswer.id]]: isValid,
     });
-    return array;
   }
+  return array;
 }
 
 export async function checkAnswer(question, answer) {
