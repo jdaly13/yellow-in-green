@@ -13,6 +13,50 @@ export async function getCurrentGame() {
   });
 }
 
+export async function getAllActiveGames() {
+  return prisma.game.findMany({
+    where: {
+      current: true,
+    },
+    include: {
+      questions: true,
+    },
+  });
+}
+
+export async function getWinlessGames() {
+  return prisma.game.findMany({
+    where: {
+      winnerId: null,
+    },
+    include: {
+      questions: true,
+    },
+  });
+}
+
+export async function makeGameInactive(gameId) {
+  return prisma.game.update({
+    where: {
+      id: gameId,
+    },
+    data: {
+      current: false,
+    },
+  });
+}
+
+export async function makeGameActive(gameId) {
+  return prisma.game.update({
+    where: {
+      id: gameId,
+    },
+    data: {
+      current: true,
+    },
+  });
+}
+
 export async function getSpecificGame(id) {
   console.log("ID", id);
   return prisma.game.findFirst({

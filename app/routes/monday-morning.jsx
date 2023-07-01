@@ -91,6 +91,7 @@ export async function action({ request }) {
         });
 
         console.log(arrayToAdd);
+        // TODO Image or some other kind of media assett
         const ipfsUploadObj = {
           date: new Date(),
           name: game_name, //
@@ -179,6 +180,9 @@ export function MondayMorning(props) {
   const gameToReferenceRef = React.useRef(null);
   const makeGameActiveRef = React.useRef(null);
 
+  const makeGameInactiveRef = React.useRef(null);
+  const winlessGameIdRef = React.useRef(null);
+
   // CUSTOM HOOK
   const previousAddress = usePrevious(address);
 
@@ -188,6 +192,9 @@ export function MondayMorning(props) {
     React.useState(null);
   const [currentErrorMessage, setCurrentErrorMessage] = React.useState(null);
   const [mostCurrentGame, setMostCurrentGame] = React.useState(false);
+
+  const [allActiveGames, setAllActiveGames] = React.useState(null);
+  const [winlessGames, setAllWinlessGames] = React.useState(null);
 
   // HOOKS
   React.useEffect(() => {
@@ -278,6 +285,64 @@ export function MondayMorning(props) {
     }
   };
 
+  const getActiveGames = async () => {
+    try {
+      const response = await fetch("/api/get-active-games");
+      const json = await response.json();
+      console.log("json--", json);
+      setAllActiveGames(JSON.stringify(json));
+    } catch (error) {
+      console.log("ERR -", error);
+      setAllActiveGames(JSON.stringify(false));
+    }
+  };
+
+  const makeGameInactive = async () => {
+    const gameId = makeGameInactiveRef.current.value;
+    try {
+      const response = await fetch(`/api/make-game-inactive?gameId=${gameId}`);
+      const json = await response.json();
+      console.log("json--", json);
+      if (json.current === false) {
+        alert("updated success");
+      }
+      // setAllActiveGames(JSON.stringify(json));
+    } catch (error) {
+      console.log("ERR -", error);
+      // setAllActiveGames(JSON.stringify(false));
+    }
+  };
+
+  const getGamesWithNoWinner = async () => {
+    try {
+      const response = await fetch("/api/get-winless-games");
+      const json = await response.json();
+      console.log("json--", json);
+      setAllWinlessGames(JSON.stringify(json));
+    } catch (error) {
+      console.log("ERR -", error);
+      setAllWinlessGames(JSON.stringify(false));
+    }
+  };
+
+  const makeWinlessGameActive = async () => {
+    const gameId = winlessGameIdRef.current.value;
+    try {
+      const response = await fetch(
+        `/api/make-winless-game-active?gameId=${gameId}`
+      );
+      const json = await response.json();
+      console.log("json--", json);
+      if (json.current === true) {
+        alert("updated success");
+      }
+      // setAllActiveGames(JSON.stringify(json));
+    } catch (error) {
+      console.log("ERR -", error);
+      // setAllActiveGames(JSON.stringify(false));
+    }
+  };
+
   const checkAnswersToGame = async (e) => {
     e.preventDefault();
     const submissionData = data.game?.questions.map((question) => {
@@ -357,6 +422,62 @@ export function MondayMorning(props) {
             {mostCurrentGame !== false && (
               <p>Most current Game: {mostCurrentGame.toString()}</p>
             )}
+            <div className="my-6 border border-black p-4">
+              <h1 className="mb-2 font-bold">Manage Active Games</h1>
+              <button
+                onClick={getActiveGames}
+                className="mt-6 w-full rounded bg-blue-500 py-2 px-4 text-white"
+              >
+                Get Active Games
+              </button>
+              {allActiveGames && (
+                <div>
+                  {allActiveGames}
+                  <div className="flex flex-wrap p-4">
+                    <input
+                      ref={makeGameInactiveRef}
+                      type="text"
+                      placeholder="Game ID"
+                      className="w-full p-2"
+                    />
+                    <button
+                      className="mt-6 w-full rounded bg-blue-500 py-2 px-4 text-white "
+                      onClick={makeGameInactive}
+                    >
+                      Make Inactive
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="my-6 border border-black p-4">
+              <h1 className="mb-2 font-bold">get all games with no winner</h1>
+              <button
+                onClick={getGamesWithNoWinner}
+                className="mt-6 w-full rounded bg-blue-500 py-2 px-4 text-white"
+              >
+                Get Games with no Winner
+              </button>
+              {winlessGames && (
+                <div>
+                  {winlessGames}
+                  <div className="flex flex-wrap p-4">
+                    <input
+                      type="text"
+                      className="w-full p-2"
+                      placeholder="make game active"
+                      ref={winlessGameIdRef}
+                    />
+                    <button
+                      className="mt-6 w-full rounded bg-blue-500 py-2 px-4 text-white"
+                      onClick={makeWinlessGameActive}
+                    >
+                      Make Game active game
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
             {recentGameCreated && (
               <>
                 <h4 className="mb-2">
@@ -415,6 +536,9 @@ export function MondayMorning(props) {
               </>
             )}
             <section className="m-8 border border-black p-6">
+              <h1 className="mb-2 text-xl font-bold">
+                Game requested in url query string default to first
+              </h1>
               <p>Game requested in url - name: {data.game?.name}</p>
               <p>Game requested in url - id: {data.game?.id}</p>
               <h4 className="my-4">QUESTIONS!</h4>
@@ -449,13 +573,13 @@ export function MondayMorning(props) {
             <section className="m-4 border border-black p-6">
               <h1>All Games</h1>
               <div className="flex flex-wrap justify-between">
-                {data.allGames.map((game) => {
+                {data.allGames.map((game, index) => {
                   return (
-                    <>
-                      <p>name: {game.name}</p>
-                      <p>id: {game.id}</p>
-                      <p>winner: {game.winnerId}</p>
-                    </>
+                    <div key={index} className="mb-4">
+                      <p className="font-bold">name: {game.name}</p>
+                      <p className="italic">id: {game.id}</p>
+                      <p className="pt-2">winner: {game.winnerId}</p>
+                    </div>
                   );
                 })}
               </div>
