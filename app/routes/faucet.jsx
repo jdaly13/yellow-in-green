@@ -92,10 +92,14 @@ export default function Index() {
             </span>
           </h1>
           <h2 className="mt-3 text-center text-primary">
-            Once you have received token go to current{" "}
-            <Link className="underline" to={`/game/${data.id}`}>
-              Game
-            </Link>
+            {data?.id && (
+              <>
+                <span>Once you have received token go to current </span>
+                <Link className="underline" to={`/game/${data.id}`}>
+                  Game
+                </Link>
+              </>
+            )}
           </h2>
           <h3 className="text-md my-4 text-center">
             1 TRIVIA Token per 24 hour period
