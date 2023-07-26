@@ -1,61 +1,40 @@
-# base node image
+# # base node image
 FROM node:16-bullseye-slim as base
 
-# set for base and all layer that inherit from it
-ENV NODE_ENV production
-
-# Install openssl for Prisma
-RUN apt-get update && apt-get install -y openssl sqlite3
-
-# Install all node_modules, including dev dependencies
-FROM base as deps
-
-WORKDIR /myapp
-
-ADD package.json package-lock.json .npmrc ./
-RUN npm install --production=false
-
-# Setup production node_modules
-FROM base as production-deps
-
-WORKDIR /myapp
-
-COPY --from=deps /myapp/node_modules /myapp/node_modules
-ADD package.json package-lock.json .npmrc ./
-RUN npm prune --production
-
-# Build the app
+# # Build the dev image
 FROM base as build
+RUN mkdir /app/
+WORKDIR /app/
+COPY . /app
+RUN npm install
+RUN npm run build
 
-WORKDIR /myapp
-
-COPY --from=deps /myapp/node_modules /myapp/node_modules
+# # Get the production modules
+FROM base as production-deps
+RUN mkdir /app/
+WORKDIR /app/
+COPY --from=build /app/node_modules /app/node_modules
 
 ADD prisma .
 RUN npx prisma generate
 
-ADD . .
-RUN npm run build
+ADD package.json package-lock.json .npmrc /app/
+RUN npm prune --production
 
-# Finally, build the production image with minimal footprint
+# Pull out the build files and do a production install
 FROM base
+ENV NODE_ENV=production
+RUN mkdir /app/
+WORKDIR /app/
+ADD package.json package-lock.json .npmrc /app/
 
-ENV DATABASE_URL=file:/data/sqlite.db
-ENV PORT="8080"
-ENV NODE_ENV="production"
+COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
+COPY --from=build /app/public /app/public
+COPY --from=build /app/build /app/build
+COPY --from=build /app/server.js /app/server.js
+COPY --from=build /app/prisma /app/prisma
+COPY --from=production-deps /app/node_modules /app/node_modules
 
-# add shortcut for connecting to database CLI
-RUN echo "#!/bin/sh\nset -x\nsqlite3 \$DATABASE_URL" > /usr/local/bin/database-cli && chmod +x /usr/local/bin/database-cli
-
-WORKDIR /myapp
-
-COPY --from=production-deps /myapp/node_modules /myapp/node_modules
-COPY --from=build /myapp/node_modules/.prisma /myapp/node_modules/.prisma
-
-COPY --from=build /myapp/build /myapp/build
-COPY --from=build /myapp/public /myapp/public
-COPY --from=build /myapp/package.json /myapp/package.json
-COPY --from=build /myapp/start.sh /myapp/start.sh
-COPY --from=build /myapp/prisma /myapp/prisma
-
-ENTRYPOINT [ "./start.sh" ]
+RUN npx prisma migrate deploy
+RUN npx prisma db seed
+CMD ["npm", "start"]
