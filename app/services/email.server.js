@@ -17,13 +17,6 @@ export async function sendEmail(obj) {
     console.log("error", error);
   }
 
-  console.log(
-    !!transporter,
-    process.env.SENDEMAILFROM,
-    process.env.EMAILPASS,
-    process.env.SENDEMAILTO
-  );
-
   try {
     const info = await transporter.sendMail({
       from: process.env.SENDEMAILFROM, // sender address
