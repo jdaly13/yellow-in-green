@@ -16,7 +16,7 @@ steps:
         "--region",
         "$_DEPLOY_REGION",
         "--set-env-vars",
-        "DATABASE_URL=${DATABASE_URL}",
+        "DATABASE_URL=$DATABASE_URL",
       ]
 images: ["gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
 # "--build-arg", "REMIX_TOKEN=$_REMIX_TOKEN"
