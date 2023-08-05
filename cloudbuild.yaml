@@ -4,6 +4,21 @@ steps:
     args: ["build", "-t", "gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA", "."]
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
+  - name: "gcr.io/cloud-builders/npm"
+    entrypoint: sh
+    env:
+      - DATABASE_URL=$_DATABASE_URL
+    args:
+      - -c
+      - |
+        wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+        chmod +x cloud_sql_proxy
+        ./cloud_sql_proxy -instances=CONNECTION_NAME=tcp:5432 & sleep 3
+        npx prisma migrate deploy
+    # args:
+    #   - "prisma"
+    #   - "migrate"
+    #   - "deploy"
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
     args:
@@ -16,14 +31,6 @@ steps:
         "--region",
         "$_DEPLOY_REGION",
       ]
-  - name: "gcr.io/cloud-builders/npm"
-    entrypoint: npx
-    env:
-      - DATABASE_URL=$_DATABASE_URL
-    args:
-      - "prisma"
-      - "migrate"
-      - "deploy"
 images: ["gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
 # "--build-arg", "REMIX_TOKEN=$_REMIX_TOKEN"
 
