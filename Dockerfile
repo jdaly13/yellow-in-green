@@ -35,6 +35,6 @@ COPY --from=build /app/server.js /app/server.js
 COPY --from=build /app/prisma /app/prisma
 COPY --from=production-deps /app/node_modules /app/node_modules
 
-RUN npx prisma migrate deploy
-RUN npx prisma db seed
+# RUN npx prisma migrate deploy
+# RUN npx prisma db seed
 CMD ["npm", "start"]
