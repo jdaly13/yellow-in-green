@@ -21,14 +21,14 @@ steps:
     args:
       - -c
       - "wget -O /workspace/cloud_sql_proxy https://storage.googleapis.com/cloudsql-proxy/v1.16/cloud_sql_proxy.linux.386 &&  chmod +x /workspace/cloud_sql_proxy"
-  - name: alpine:3.10
+  - name: gcr.io/cloud-builders/docker
     timeout: 100s
     entrypoint: sh
     env:
       - DATABASE_URL=$_DATABASE_URL
     args:
       - -c
-      - "(/workspace/cloud_sql_proxy -dir=/workspace -instances=yellowingreen:us-central1:yellow-in-green-1-dev=tcp:3306 & sleep 2) && npx prisma migrate deploy"
+      - "(/workspace/cloud_sql_proxy -dir=/workspace -instances=yellowingreen:us-central1:yellow-in-green-1-dev=tcp:3306 & sleep 2) && npm prisma migrate deploy"
   # - name: "gcr.io/cloud-builders/npm"
   #   entrypoint: sh
   #   env:
