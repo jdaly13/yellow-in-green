@@ -16,21 +16,34 @@ steps:
         "--region",
         "$_DEPLOY_REGION",
       ]
-  - name: "gcr.io/cloud-builders/npm"
+  - id: proxy-install
+    name: alpine:3.10
     entrypoint: sh
-    env:
-      - DATABASE_URL=$_DATABASE_URL
     args:
       - -c
-      - |
-        wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
-        chmod +x cloud_sql_proxy
-        ./cloud_sql_proxy -instances=yellowingreen:us-central1:yellow-in-green-1-dev=tcp:3306 & sleep 3;
-        npx prisma migrate deploy
-    # args:
-    #   - "prisma"
-    #   - "migrate"
-    #   - "deploy"
+      - "wget -O /workspace/cloud_sql_proxy https://storage.googleapis.com/cloudsql-proxy/v1.16/cloud_sql_proxy.linux.386 &&  chmod +x /workspace/cloud_sql_proxy"
+  - id: cmd-with-proxy
+    name: [$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA]
+    timeout: 100s
+    entrypoint: sh
+    args:
+      - -c
+      - "(/workspace/cloud_sql_proxy -dir=/workspace -instances=yellowingreen:us-central1:yellow-in-green-1-dev & sleep 2) && npx prisma migrate deploy"
+  # - name: "gcr.io/cloud-builders/npm"
+  #   entrypoint: sh
+  #   env:
+  #     - DATABASE_URL=$_DATABASE_URL
+  #   args:
+  #     - -c
+  #     - |
+  #       wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+  #       chmod +x cloud_sql_proxy
+  #       ./cloud_sql_proxy -instances=yellowingreen:us-central1:yellow-in-green-1-dev=tcp:3306 & sleep 3;
+  #       npx prisma migrate deploy
+  # args:
+  #   - "prisma"
+  #   - "migrate"
+  #   - "deploy"
 images: ["gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
 # "--build-arg", "REMIX_TOKEN=$_REMIX_TOKEN"
 
