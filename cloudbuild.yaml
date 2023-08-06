@@ -18,7 +18,7 @@ steps:
     # args:
     #   - "prisma"
     #   - "migrate"
-    #   - "deploy "
+    #   - "deploy"
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
     args:
