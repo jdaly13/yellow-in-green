@@ -16,14 +16,12 @@ steps:
         "--region",
         "$_DEPLOY_REGION",
       ]
-  - id: proxy-install
-    name: alpine:3.10
+  - name: alpine:3.10
     entrypoint: sh
     args:
       - -c
       - "wget -O /workspace/cloud_sql_proxy https://storage.googleapis.com/cloudsql-proxy/v1.16/cloud_sql_proxy.linux.386 &&  chmod +x /workspace/cloud_sql_proxy"
-  - id: cmd-with-proxy
-    name: [$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA]
+  - name: cloud_sql_proxy
     timeout: 100s
     entrypoint: sh
     args:
