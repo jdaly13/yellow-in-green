@@ -16,7 +16,7 @@ steps:
         "--region",
         "$_DEPLOY_REGION",
       ]
-  - name: alpine:3.10
+  - name: gcr.io/cloud-builders/docker
     entrypoint: sh
     args:
       - -c
