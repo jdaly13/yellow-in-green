@@ -2,8 +2,8 @@ steps:
   # Install Node.js dependencies
   - id: npm-install
     name: node:16
-    entrypoint: yarn
-    args: ["npm install", "--frozen-lockfile"]
+    entrypoint: npm
+    args: ["install", "--frozen-lockfile"]
     timeout: "4000s"
     waitFor: ["-"]
 
