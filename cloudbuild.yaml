@@ -26,7 +26,6 @@ steps:
       - "mkdir /cloudsql; chmod 777 /cloudsql; (./cloud_sql_proxy --unix-socket /cloudsql yellowingreen:us-central1:yellow-in-green-1-dev=tcp:3306 & sleep 2) && npx migrate prisma"
     timeout: "1200s"
     waitFor: ["yarn-install", "proxy-install"]
-timeout: "1200s"
 
   - id: build
     name: "gcr.io/cloud-builders/docker"
@@ -49,11 +48,8 @@ timeout: "1200s"
         "--region",
         "$_DEPLOY_REGION",
       ]
+timeout: "1200s"
 images: ["gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
-
-
-
-
 # steps:
 #   # Build the container image
 #   - name: "gcr.io/cloud-builders/docker"
@@ -85,21 +81,21 @@ images: ["gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
 #         "--region",
 #         "$_DEPLOY_REGION",
 #       ]
-  # - name: "gcr.io/cloud-builders/npm"
-  #   entrypoint: sh
-  #   env:
-  #     - DATABASE_URL=$_DATABASE_URL
-  #   args:
-  #     - -c
-  #     - |
-  #       wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
-  #       chmod +x cloud_sql_proxy
-  #       ./cloud_sql_proxy -instances=yellowingreen:us-central1:yellow-in-green-1-dev=tcp:3306 & sleep 3;
-  #       npx prisma migrate deploy
-  # args:
-  #   - "prisma"
-  #   - "migrate"
-  #   - "deploy"
+# - name: "gcr.io/cloud-builders/npm"
+#   entrypoint: sh
+#   env:
+#     - DATABASE_URL=$_DATABASE_URL
+#   args:
+#     - -c
+#     - |
+#       wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+#       chmod +x cloud_sql_proxy
+#       ./cloud_sql_proxy -instances=yellowingreen:us-central1:yellow-in-green-1-dev=tcp:3306 & sleep 3;
+#       npx prisma migrate deploy
+# args:
+#   - "prisma"
+#   - "migrate"
+#   - "deploy"
 # "--build-arg", "REMIX_TOKEN=$_REMIX_TOKEN"
 
 # availableSecrets:
