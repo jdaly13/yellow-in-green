@@ -4,14 +4,14 @@ steps:
     name: node:16
     entrypoint: yarn
     args: ["npm install", "--frozen-lockfile"]
-    timeout: "999900s"
+    timeout: "4000s"
     waitFor: ["-"]
 
   # Install Cloud SQL proxy
   - id: proxy-install
     name: node:16
     entrypoint: sh
-    timeout: "999900s"
+    timeout: "4000s"
     args:
       - "-c"
       - "wget https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.4.0/cloud-sql-proxy.linux.amd64 -O cloud_sql_proxy && chmod +x cloud_sql_proxy"
