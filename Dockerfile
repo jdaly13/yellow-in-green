@@ -28,12 +28,15 @@ RUN mkdir /app/
 WORKDIR /app/
 ADD package.json package-lock.json .npmrc /app/
 
+COPY --from=production-deps /app/node_modules /app/node_modules
 COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
+
 COPY --from=build /app/public /app/public
 COPY --from=build /app/build /app/build
 COPY --from=build /app/server.js /app/server.js
+COPY --from=build /app/start.sh /app/start.sh
 COPY --from=build /app/prisma /app/prisma
-COPY --from=production-deps /app/node_modules /app/node_modules
+
 
 # RUN npx prisma migrate deploy
 # RUN npx prisma db seed
