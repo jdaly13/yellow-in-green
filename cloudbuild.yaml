@@ -18,6 +18,7 @@ steps:
     waitFor: ["npm-install"]
 
   # Migrate database schema to the latest version
+  # =tcp:3306
   - id: migrate
     name: node:16
     entrypoint: sh
@@ -25,7 +26,7 @@ steps:
       - DATABASE_URL=$_DATABASE_URL
     args:
       - "-c"
-      - "mkdir /cloudsql; chmod 777 /cloudsql; (./cloud_sql_proxy --unix-socket /cloudsql yellowingreen:us-central1:yellow-in-green-1-dev=tcp:3306 & sleep 2) && npx migrate prisma"
+      - "mkdir /cloudsql; chmod 777 /cloudsql; (./cloud_sql_proxy --unix-socket /cloudsql yellowingreen:us-central1:yellow-in-green-1-dev & sleep 2) && npx migrate prisma"
     timeout: "1200s"
     waitFor: ["npm-install", "proxy-install"]
   - id: build
