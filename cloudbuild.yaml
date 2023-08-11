@@ -29,6 +29,8 @@ steps:
       - "mkdir /cloudsql; chmod 777 /cloudsql; (./cloud_sql_proxy --unix-socket /cloudsql yellowingreen:us-central1:yellow-in-green-1-dev & sleep 2) && npx prisma migrate deploy"
     timeout: "1200s"
     waitFor: ["npm-install", "proxy-install"]
+timeout:
+  "1400s"
   # - id: build
   #   name: "gcr.io/cloud-builders/docker"
   #   args: ["build", "-t", "gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA", "."]
@@ -50,7 +52,6 @@ steps:
   #       "--region",
   #       "$_DEPLOY_REGION",
   #     ]
-timeout: "1200s"
 # images: ["gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
 # steps:
 #   # Build the container image
