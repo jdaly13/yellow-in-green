@@ -23,7 +23,7 @@ steps:
     name: node:16
     entrypoint: sh
     env:
-      - DATABASE_URL=$_DATABASE_URL
+      - DATABASE_URL=mysql://james_dev:birdismilkfat1326!@34.171.173.136:3306/dev
     args:
       - "-c"
       - "mkdir /cloudsql; chmod 777 /cloudsql; (./cloud_sql_proxy --unix-socket /cloudsql yellowingreen:us-central1:yellow-in-green-1-dev & sleep 2) && npx prisma migrate deploy"
