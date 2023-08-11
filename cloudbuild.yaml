@@ -51,7 +51,7 @@ steps:
   #       "$_DEPLOY_REGION",
   #     ]
 timeout: "1200s"
-images: ["gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
+# images: ["gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
 # steps:
 #   # Build the container image
 #   - name: "gcr.io/cloud-builders/docker"
