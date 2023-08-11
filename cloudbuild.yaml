@@ -26,7 +26,7 @@ steps:
       - DATABASE_URL=$_DATABASE_URL
     args:
       - "-c"
-      - "mkdir /cloudsql; chmod 777 /cloudsql; (./cloud_sql_proxy --unix-socket /cloudsql yellowingreen:us-central1:yellow-in-green-1-dev & sleep 2) && npx prisma migrate deploy"
+      - "mkdir /cloudsql; chmod 777 /cloudsql; (./cloud_sql_proxy --unix-socket /cloudsql yellowingreen:us-central1:yellow-in-green-1-dev & sleep 3) && npx prisma migrate deploy"
     timeout: "1200s"
     waitFor: ["npm-install", "proxy-install"]
 timeout: "14000s"
