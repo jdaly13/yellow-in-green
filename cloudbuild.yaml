@@ -30,7 +30,7 @@ steps:
     timeout: "1200s"
     waitFor: ["npm-install", "proxy-install"]
 timeout:
-  "1400s"
+  "1000s"
   # - id: build
   #   name: "gcr.io/cloud-builders/docker"
   #   args: ["build", "-t", "gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA", "."]
