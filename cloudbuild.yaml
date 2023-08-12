@@ -21,6 +21,7 @@ steps:
   - id: deploy
     name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
+    waitFor: ["push"]
     args:
       [
         "run",
@@ -31,8 +32,6 @@ steps:
         "--region",
         "$_DEPLOY_REGION",
       ]
-    waitFor: ["push"]
-
   timeout: "14000s"
   images: ["gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
 
