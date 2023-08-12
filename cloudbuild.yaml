@@ -1,10 +1,16 @@
 steps:
   # Install Node.js dependencies
-  - id: npm-install
-    name: node:16
-    entrypoint: npm
-    args: ["install", "--frozen-lockfile"]
-    timeout: "4000s"
+  # - id: npm-install
+  #   name: node:16
+  #   entrypoint: npm
+  #   args: ["install", "--frozen-lockfile"]
+  #   timeout: "4000s"
+  #   waitFor: ["-"]
+
+  - id: build
+    name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA", "."]
+    timeout: "8000s"
     waitFor: ["-"]
 
   # Install Cloud SQL proxy
@@ -15,7 +21,7 @@ steps:
     args:
       - "-c"
       - "wget https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.4.0/cloud-sql-proxy.linux.amd64 -O cloud_sql_proxy && chmod +x cloud_sql_proxy"
-    waitFor: ["npm-install"]
+    waitFor: ["build"]
 
   # Migrate database schema to the latest version
   # =tcp:3306
@@ -28,7 +34,7 @@ steps:
       - "-c"
       - "mkdir /cloudsql; chmod 777 /cloudsql; (./cloud_sql_proxy --unix-socket /cloudsql yellowingreen:us-central1:yellow-in-green-1-dev & sleep 3) && npx prisma migrate deploy"
     timeout: "1200s"
-    waitFor: ["npm-install", "proxy-install"]
+    waitFor: ["build", "proxy-install"]
 timeout: "14000s"
 # images:
 #   ["gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
