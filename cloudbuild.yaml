@@ -18,6 +18,19 @@ steps:
     args: ["push", "gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
     waitFor: ["build"]
 
+  - id: deploy
+    name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      [
+        "run",
+        "deploy",
+        "$_SERVICE_NAME",
+        "--image",
+        "gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA",
+        "--region",
+        "$_DEPLOY_REGION",
+      ]
   # Install Cloud SQL proxy
   # - id: proxy-install
   #   name: node:16
