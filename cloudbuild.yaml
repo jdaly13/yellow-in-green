@@ -23,9 +23,7 @@ steps:
     entrypoint: gcloud
     waitFor: ["push"]
     args:
-      [
-        "run",
-        "deploy",
+      ["run", "deploy",
         "$_SERVICE_NAME",
         "--image",
         "gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA",
