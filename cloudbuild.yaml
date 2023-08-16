@@ -19,7 +19,7 @@ steps:
         ./cloud_sql_proxy -instances=yellowingreen:us-central1:yellow-in-green-1-dev=tcp:3306 & sleep 3
         export DATABASE_URL=$_DATABASE_URL_LOCALHOST
         npx prisma migrate deploy
-    timeout: "1200s"
+    timeout: "1300s"
     waitFor: ["npm-install"]
 
   - id: build
