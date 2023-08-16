@@ -40,5 +40,5 @@ COPY --from=build /app/prisma /app/prisma
 
 # RUN npx prisma migrate deploy
 # RUN npx prisma db seed
-# CMD ["npm", "start"]
-ENTRYPOINT [ "./start.sh" ]
+CMD ["npm", "start"]
+# ENTRYPOINT [ "./start.sh" ]
