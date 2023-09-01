@@ -114,3 +114,34 @@ https://github.com/jdaly13/yellow-in-gree n/issues/18
 ## SWITCHING TO MYSQL
 
 https://www.prisma.io/docs/concepts/components/prisma-migrate/prisma-migrate-limitations-issues#you-cannot-automatically-switch-database-providers
+
+Steps
+Database url on cloud run needs to include socket query string. Version 3
+/cloudsq/{instance name}
+This is stored as a secret
+
+On cloud build database url needs to be localhost - \_DATABASE_URL_LOCALHOST
+yellowingreen:us-central1:yellow-in-green-1-dev
+Saved as ENV variable/secret
+
+https://www.prisma.io/docs/concepts/database-connectors/mysql
+
+https://stackoverflow.com/questions/74424929/what-is-the-postgres-database-url-to-connect-cloud-run-to-postgres-on-cloud-sql/74438667?noredirect=1#comment131499113_74438667
+Related below
+https://cloud.google.com/sql/docs/mysql/connect-run
+
+Both explain where you need socket path you created in cloud build
+
+Cloud build
+https://stackoverflow.com/questions/74891893/google-cloud-build-cloud-run-cloud-sql-prisma-migration/74891894?noredirect=1#comment135569389_74891894
+
+Connect from cloud run documentation
+https://cloud.google.com/sql/docs/mysql/connect-run
+
+Connect to CloudSql for mySql using the Cloud-sql auth proxy
+https://cloud.google.com/sql/docs/mysql/connect-instance-auth-proxy
+
+Another somewhat. Helpful question/answer page
+https://stackoverflow.com/questions/52352103/run-node-js-database-migrations-on-google-cloud-sql-during-google-cloud-build/64599510#64599510
+
+## END OF - SWITCHING TO MYSQL
