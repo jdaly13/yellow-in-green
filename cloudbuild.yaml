@@ -16,7 +16,7 @@ steps:
       - |
         wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
         chmod +x cloud_sql_proxy
-        ./cloud_sql_proxy -instances=yellowingreen:us-central1:dev2-dev=tcp:3306 & sleep 3
+        ./cloud_sql_proxy -instances=yellowingreen:us-central1:dev2=tcp:3306 & sleep 3
         export DATABASE_URL=$_DATABASE_URL_LOCALHOST
         npx prisma migrate deploy
     timeout: "1300s"
