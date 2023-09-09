@@ -16,9 +16,10 @@ steps:
       - |
         wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
         chmod +x cloud_sql_proxy
-        ./cloud_sql_proxy -instances=yellowingreen:us-central1:dev2=tcp:3306 & sleep 3
-        export DATABASE_URL=$_DATABASE_URL_LOCALHOST
+        ./cloud_sql_proxy -instances=$_INSTANCE & sleep 3
+        export DATABASE_URL=mysql://$$_DB_USER:$$_DB_PASS@127.0.0.1:3306/$$_DB_NAME
         npx prisma migrate deploy
+    secretEnv: ["_DB_USER", "_DB_PASS", "_DB_NAME"]
     timeout: "1300s"
     waitFor: ["npm-install"]
 
@@ -44,3 +45,13 @@ steps:
         "$_DEPLOY_REGION",
       ]
 images: ["gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA"]
+options:
+  substitutionOption: ALLOW_LOOSE
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/DB_NAME/versions/latest
+      env: "_DB_NAME"
+    - versionName: projects/$PROJECT_ID/secrets/DB_PASS/versions/latest
+      env: "_DB_PASS"
+    - versionName: projects/$PROJECT_ID/secrets/DB_USER/versions/latest
+      env: "_DB_USER"

@@ -368,7 +368,7 @@ export function MondayMorning(props) {
   return (
     <div className="flex min-h-full flex-col justify-center">
       <div className="mx-auto w-full max-w-md px-8">
-        {data.user ? (
+        {data.user && address ? (
           <>
             {currentErrorMessage && (
               <h1 className="pt-1 text-lg text-red-700">
