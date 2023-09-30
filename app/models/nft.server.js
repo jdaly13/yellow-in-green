@@ -11,6 +11,11 @@ if (process.env.NETWORK === "goerli") {
   provider = new ethers.providers.JsonRpcProvider(process.env.NETWORK_URL);
   const privateKey = process.env.GOERLI_PRIVATE_KEY;
   signer = new ethers.Wallet(privateKey, provider);
+} else if (process.env.NETWORK === "polygon") {
+  trophyJson = require(`../../contracts/deployments/matic/Trophy.json`);
+  provider = new ethers.providers.JsonRpcProvider(process.env.NETWORK_URL);
+  const privateKey = process.env.POLYGON_PRIVATE_KEY;
+  signer = new ethers.Wallet(privateKey, provider);
 } else {
   //localhost
   trophyJson = require(`../../contracts/deployments/localhost/Trophy.json`);

@@ -13,6 +13,7 @@ export async function loader({ request }) {
 }
 export default function Index() {
   const data = useLoaderData();
+  console.log({ data });
   return (
     <main className="relative min-h-screen bg-primary sm:flex sm:items-center sm:justify-center lg:bg-base-300">
       <div className="relative sm:pb-16 sm:pt-8">
@@ -37,8 +38,11 @@ export default function Index() {
                   <ul className="ml-6 list-outside list-disc">
                     <li>Ethereum Wallet like Metamask or Brave Walet</li>
                     <li>
-                      Small amount of {data.network} Ethereum to cover
-                      transaction costs
+                      Small amount of{" "}
+                      {data.network !== "polygon"
+                        ? `${data.network} Ether`
+                        : "Polygon Matic"}{" "}
+                      to cover transaction costs
                     </li>
                   </ul>
                 </div>
@@ -72,8 +76,8 @@ export default function Index() {
                     <li>Connect Wallet</li>
                     <li>Add Your Ante (TRIVIA token) to the pot</li>
                     <li>
-                      First Player to answer all questions correctly recieve the
-                      pot of TRIVIA Tokens and an NFT for that Game
+                      First Player to answer all questions correctly receives
+                      the pot of TRIVIA Tokens and an NFT for that Game
                     </li>
                     <li>
                       For more info and FAQ visit{" "}

@@ -9,7 +9,7 @@ require("dotenv").config();
 module.exports = {
   solidity: "0.8.17",
   networks: {
-    polygon: {
+    matic: {
       url: process.env.POLYGON_URL || "",
       accounts:
         process.env.POLYGON_KEY !== undefined ? [process.env.POLYGON_KEY] : [],

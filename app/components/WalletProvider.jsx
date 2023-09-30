@@ -19,10 +19,21 @@ const chains = [goerli, mainnet, polygon, hardhat, localhost];
 
 const projectId = "84492e8bb8d816b88bfdb4789ee16d17";
 
+const matchExactNetworkName = (network) => {
+  if (network === "polygon") {
+    return "matic";
+  }
+  if (network === "mainnet") {
+    return "homestead";
+  }
+  return network;
+};
+
 export default function WalletProvider({ children }) {
   const { network } = useContext(ContractContext);
   const chainToUse = chains.filter((chain) => {
-    return chain.network === network;
+    const matchedNetwork = matchExactNetworkName(network);
+    return chain.network === matchedNetwork;
   });
   // Wagmi client
   // const infuraID = "5992eda22fc948b196ac1629655d7c8a";

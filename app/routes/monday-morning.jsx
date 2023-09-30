@@ -196,14 +196,19 @@ export function MondayMorning(props) {
   const [allActiveGames, setAllActiveGames] = React.useState(null);
   const [winlessGames, setAllWinlessGames] = React.useState(null);
 
+  const [validAddress, setValidAddress] = React.useState(false);
+
   // HOOKS
   React.useEffect(() => {
     async function checkAddress() {
       const content = await fetch(`/api/portal?address=${address}`);
       const addressData = await content.json();
       console.log({ addressData }, address);
-      if (!addressData?.match) {
-        window.location.href = window.location.origin;
+      // if (!addressData?.match) {
+      //   window.location.href = window.location.origin;
+      // }
+      if (addressData?.match) {
+        setValidAddress(true);
       }
     }
     if (address && previousAddress !== address) {
@@ -226,7 +231,7 @@ export function MondayMorning(props) {
   const createGame = async (event) => {
     event.preventDefault();
     const nameOfGame = gameRef.current.value;
-    const makeGameActive = makeGameActiveRef.current.checked;
+    const makeGameActive = makeGameActiveRef?.current?.checked ?? "false";
     if (nameOfGame.length > 7) {
       const fetchUrl = `/api/game-creation?game=${nameOfGame}&makeCurrent=${makeGameActive}`;
       const response = await fetch(fetchUrl);
@@ -368,7 +373,7 @@ export function MondayMorning(props) {
   return (
     <div className="flex min-h-full flex-col justify-center">
       <div className="mx-auto w-full max-w-md px-8">
-        {data.user && address ? (
+        {data.user && validAddress ? (
           <>
             {currentErrorMessage && (
               <h1 className="pt-1 text-lg text-red-700">

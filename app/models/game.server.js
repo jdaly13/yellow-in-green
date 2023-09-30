@@ -9,6 +9,7 @@ export async function getCurrentGame() {
     },
     include: {
       questions: true,
+      user: true,
     },
   });
 }
@@ -65,6 +66,7 @@ export async function getSpecificGame(id) {
     },
     include: {
       questions: true,
+      user: true,
     },
   });
 }
@@ -278,3 +280,11 @@ export async function createQuestion(questionText, answerText, gameId) {
     },
   });
 }
+
+// export async function getUsersByGame(gameID) {
+//   return prisma.user.findMany({
+//     where: {
+//       gameId: gameID,
+//     },
+//   });
+// }

@@ -17,7 +17,9 @@ export default function BalanceInfo({
   deposit,
 }) {
   const [poolButton, setPoolButton] = useState(false);
+  const [prizeAmount, setPrizeAmount] = useState(null);
   const { contracts, game } = useContext(ContractContext);
+  console.log({ game });
 
   const { data } = useContractRead({
     address: contracts.triviaJson.address,
@@ -33,12 +35,26 @@ export default function BalanceInfo({
     args: [game?.id, address],
   });
 
+  const poolAmount = useContractRead({
+    address: contracts.poolJson.address,
+    abi: contracts.poolJson.abi,
+    functionName: "depositsPerGame",
+    args: [game?.id],
+  });
+
   useEffect(() => {
     if (data) {
       const formattedData = utils.formatEther(data);
       setTokenData(formattedData);
     }
   }, [data, setTokenData]);
+
+  useEffect(() => {
+    if (poolAmount?.data) {
+      const formatedData = utils.formatEther(poolAmount.data);
+      setPrizeAmount(formatedData);
+    }
+  }, [poolAmount]);
 
   useEffect(() => {
     if (activePlayer?.data && utils.formatEther(activePlayer.data) < 1) {
@@ -72,6 +88,14 @@ export default function BalanceInfo({
           </p>
         </>
       )}
+      {prizeAmount && game?.current && (
+        <p className="font-bold">
+          Current prize amount: {prizeAmount} TRIVIA Tokens
+        </p>
+      )}
+      {game?.user?.length > 3 && game?.current && (
+        <p className="">There are currently {game.user.length} players</p>
+      )}
       {poolButton && tokenData >= 1.0 && !deposit && game?.current && (
         <PoolButton
           setPoolButton={setPoolButton}
@@ -80,7 +104,7 @@ export default function BalanceInfo({
           setDeposit={setDeposit}
         />
       )}
-      {deposit && (
+      {deposit && game?.current && (
         <p className="font-bold">You are currently playing the game</p>
       )}
     </div>

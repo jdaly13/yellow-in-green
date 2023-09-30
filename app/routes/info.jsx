@@ -1,6 +1,6 @@
 import { json } from "@remix-run/node";
 import { getCurrentGame } from "~/models/game.server";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 
 export async function loader({ request }) {
   const currentGame = await getCurrentGame(request);
@@ -47,6 +47,46 @@ export default function Index() {
                   <h2 className="mb-4 text-center text-xl">Requirements</h2>
                 </div>
                 <div className="my-4">
+                  <h2 className="mb-4 text-center text-xl">How to play game</h2>
+                  <ul className="ml-8 list-outside list-decimal">
+                    <li>
+                      You will need at least 1 Trivia Token to play game, head
+                      over to the{" "}
+                      <Link className="underline" to="/faucet">
+                        faucet
+                      </Link>{" "}
+                      and receive a TRIVIA Token, no cost to you. (you will need
+                      a wallet see below)
+                    </li>
+                    <li>
+                      Once you have a TRIVIA token, you can go to the{" "}
+                      {data?.currentGame?.id ? (
+                        <Link
+                          className="underline"
+                          to={`/game/${data.currentGame.id}`}
+                        >
+                          current game
+                        </Link>
+                      ) : (
+                        <span>
+                          game (currently there is no game ... stay tuned)
+                        </span>
+                      )}
+                    </li>
+                    <li>
+                      To Play the game you will need to deposit your token in
+                      the pool, There are two transactions in the deposit
+                      process, the first one will approve the application to
+                      access your token the second transaction will transfer the
+                      token to the pool which will cost small amount of{" "}
+                      {data.network !== "polygon"
+                        ? `${data.network} Ether`
+                        : "Polygon Matic"}{" "}
+                      to cover the network fees
+                    </li>
+                  </ul>
+                </div>
+                <div className="my-4">
                   <h2 className="mb-4 text-center text-xl">
                     Rules to play game
                   </h2>
@@ -59,10 +99,6 @@ export default function Index() {
                       The winner of the Game will receive all the tokens added
                       to the pool for that Game and also an NFT with data to
                       each question.
-                    </li>
-                    <li>
-                      You will need a small amount of {data.network} to cover
-                      transaction costs
                     </li>
                   </ul>
                 </div>

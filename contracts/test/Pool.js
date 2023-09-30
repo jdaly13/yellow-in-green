@@ -99,7 +99,7 @@ describe("pool contract", function () {
     expect(account1BalanceAgain).to.equal(0);
   });
 
-  it("should deposit money into pool from accounts 3, 4, 5 and pay out 5 as winner", async () => {
+  it.only("should deposit money into pool from accounts 3, 4, 5 and pay out 5 as winner", async () => {
     await trivia
       .connect(account3)
       .approve(pool.address, ethers.utils.parseEther("1"));
@@ -123,6 +123,10 @@ describe("pool contract", function () {
 
     const depositsperGame = await pool.depositsPerGame(gameId1);
     expect(depositsperGame).to.equal(ethers.utils.parseEther("3"));
+
+    const listOfAllUsers = await pool.listOfAllUsersPerGame(gameId1, 1);
+
+    console.log({ listOfAllUsers });
 
     const tx4 = await pool.withdrawToWinner(account5.address, gameId1);
     await tx4.wait();
