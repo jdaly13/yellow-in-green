@@ -33,10 +33,15 @@ try {
 }
 
 export async function makeItRain(address) {
+  const gas = await provider.getGasPrice();
+  const gasLimit = 2200000;
   try {
     const balance = await faucet.balance();
     console.log("balance", ethers.utils.formatEther(balance));
-    const tx = await faucet.fund(address);
+    const tx = await faucet.fund(address, {
+      gasPrice: gas,
+      gasLimit: gasLimit,
+    });
 
     const receipt = await tx.wait();
     console.log("receipt", receipt);

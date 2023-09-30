@@ -40,8 +40,13 @@ export async function makeSureGameIsActive(gameId) {
 
 // TODO CHANGE WHEN LAUNCHING NEW CONTRACT
 export async function makePayment(address, gameId) {
+  const gas = await provider.getGasPrice();
+  const gasLimit = 2200000;
   try {
-    const tx = await pool.withdrawToWinner(address, gameId); // add gameID next launch
+    const tx = await pool.withdrawToWinner(address, gameId, {
+      gasPrice: gas,
+      gasLimit: gasLimit,
+    });
 
     const receipt = await tx.wait();
     console.log("receipt", receipt);

@@ -52,8 +52,13 @@ export function ipfsUpload(body) {
 }
 
 export async function mintNFT(winnerAddress, tokenUri) {
+  const gas = await provider.getGasPrice();
+  const gasLimit = 2200000;
   try {
-    const tx = await trophy.awardWinner(winnerAddress, tokenUri);
+    const tx = await trophy.awardWinner(winnerAddress, tokenUri, {
+      gasPrice: gas,
+      gasLimit: gasLimit,
+    });
 
     const receipt = await tx.wait();
     console.log("receipt", receipt);
