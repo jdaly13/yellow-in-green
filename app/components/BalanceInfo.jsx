@@ -174,7 +174,9 @@ export function PoolButton(props) {
           setDeposit(true);
           console.log("Congrats");
           setProcessStage(3);
-          setToastMessage("Transaction Success");
+          setToastMessage(
+            "Transaction Success, if Balance information isn't immediately reflected please wait and refresh browser"
+          );
           const currentTriviaBalance = await tokenContract.balanceOf(
             props.address
           );
