@@ -14,6 +14,7 @@ import { goerli, hardhat, localhost, mainnet, polygon } from "wagmi/chains";
 import { useContext } from "react";
 
 import { ContractContext } from "~/components/ContractContextWrapper";
+import { Buffer } from "buffer";
 
 const chains = [goerli, mainnet, polygon, hardhat, localhost];
 
@@ -47,7 +48,7 @@ export default function WalletProvider({ children }) {
   ]);
   const wagmiClient = createClient({
     autoConnect: true,
-    connectors: w3mConnectors({ projectId, version: 1, chains: chainToUse }),
+    connectors: w3mConnectors({ projectId, chains: chainToUse }),
     provider,
   });
 
@@ -57,6 +58,9 @@ export default function WalletProvider({ children }) {
   return (
     <ClientOnly>
       {() => {
+        if (!window.Buffer) {
+          window.Buffer = Buffer;
+        }
         return (
           <>
             <WagmiConfig client={wagmiClient}>{children}</WagmiConfig>
