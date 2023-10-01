@@ -147,6 +147,36 @@ export default function Index() {
                     </li>
                   </ul>
                 </div>
+                <div className="mb-4">
+                  <h2 className="mb-4 text-center text-xl">
+                    Inspiration for site
+                  </h2>
+                  <p className="text-center">
+                    <a
+                      target="_blank"
+                      href="https://www.youtube.com/watch?v=QsvwRur6Ibg"
+                      rel="noreferrer"
+                      className="underline"
+                    >
+                      Yellow in Green
+                    </a>
+                  </p>
+                </div>
+                <div className="mb-4">
+                  <h2 className="mb-4 text-center text-xl">
+                    Support/Inquries/Questions/Comments
+                  </h2>
+                  <p className="text-center">
+                    <a
+                      target="_blank"
+                      href="https://twitter.com/yellow_in_green"
+                      rel="noreferrer"
+                      className="underline"
+                    >
+                      @yellow_in_green
+                    </a>
+                  </p>
+                </div>
               </div>
             </div>
           </div>

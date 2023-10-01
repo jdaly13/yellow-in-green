@@ -16,6 +16,9 @@ PRISMA STUDIO (for Prod)
 https://stackoverflow.com/questions/73335287/how-to-access-prisma-studio-when-the-app-is-already-deployed-on-heroku
 https://www.prisma.io/docs/data-platform/about
 
+https://github.com/prisma/studio/issues/895#issuecomment-1083051249
+https://github.com/prisma/studio/issues/790
+
 ## FAUCET
 
 https://raw.githubusercontent.com/harmony-one/token-faucet-demo-dapp/main/contracts/Faucet.sol
@@ -85,7 +88,7 @@ for example algorand you would get that nft using indexer and then transfer that
 Interesting article
 https://medium.com/coinmonks/how-to-find-your-nft-on-ipfs-e51bc5e7c8a1
 
-## External Scripts
+## External Scripts Wallet Connect - WAGMI
 
 // Script using for testing purposes to test a backend call of 5 seconds
 
@@ -98,6 +101,14 @@ return new Promise((resolve) => {
 ```
 
 Wallet Connect - https://cloud.walletconnect.com/app
+Wagmi with Wallet Connect and wallet Modal
+https://0.12.x.wagmi.sh/core/connectors/walletConnect
+https://wagmi.sh/react/migration-guide#012x-breaking-changes
+
+https://docs.walletconnect.com/advanced/migration-from-v1.x/dapps#web3modal-v20
+https://cloud.walletconnect.com/app/project?uuid=7ec5a112-551e-4ed3-9dd2-92c0e7dbd32a
+https://docs.walletconnect.com/web3modal/react/about
+https://docs.walletconnect.com/web3modal/v2/react/wagmi/installation
 
 ## ICONS
 
@@ -145,3 +156,6 @@ Another somewhat. Helpful question/answer page
 https://stackoverflow.com/questions/52352103/run-node-js-database-migrations-on-google-cloud-sql-during-google-cloud-build/64599510#64599510
 
 ## END OF - SWITCHING TO MYSQL
+
+WalletConnect
+https://cloud.walletconnect.com/app/project?uuid=7ec5a112-551e-4ed3-9dd2-92c0e7dbd32a
