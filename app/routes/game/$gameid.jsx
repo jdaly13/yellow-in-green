@@ -294,7 +294,7 @@ function GameBody(props) {
   return (
     <>
       <section className="mx-auto mb-6 flex flex-col justify-center px-4 text-center text-secondary-content lg:px-0">
-        <h1 className="mb-8 text-center text-4xl uppercase">
+        <h1 className="mb-8 text-center text-xl uppercase lg:text-4xl">
           {data.game?.name}
         </h1>
         {checkFinalStatus()}

@@ -89,12 +89,14 @@ export default function BalanceInfo({
         </>
       )}
       {prizeAmount && game?.current && (
-        <p className="font-bold">
-          Current prize amount: {prizeAmount} TRIVIA Tokens
+        <p className="text-center font-bold lg:text-left">
+          Prize amount: {prizeAmount} TRIVIA Tokens
         </p>
       )}
       {game?.user?.length > 3 && game?.current && (
-        <p className="">There are currently {game.user.length} players</p>
+        <p className="text-center font-bold lg:text-left">
+          There are currently {game.user.length} players
+        </p>
       )}
       {poolButton && tokenData >= 1.0 && !deposit && game?.current && (
         <PoolButton
@@ -105,7 +107,9 @@ export default function BalanceInfo({
         />
       )}
       {deposit && game?.current && (
-        <p className="font-bold">You are currently playing the game</p>
+        <p className="text-center font-bold font-bold lg:text-left">
+          You are currently playing the game
+        </p>
       )}
     </div>
   );
