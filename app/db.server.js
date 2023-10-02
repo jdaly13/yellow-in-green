@@ -8,6 +8,19 @@ let prisma;
 // in production we'll have a single connection to the DB.
 if (process.env.NODE_ENV === "production") {
   prisma = new PrismaClient();
+  // const prisma = new PrismaClient({
+  //   datasources: {
+  //     db: {
+  //       url: `mysql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`,
+  //     },
+  //   },
+  // })
+  // https://github.com/prisma/prisma/discussions/3561
+  // also change prisma.schema
+  // datasource db {
+  //   provider = "mysql"
+  //   url = ""
+  // }
 } else {
   if (!global.__db__) {
     global.__db__ = new PrismaClient();

@@ -11,6 +11,11 @@ if (process.env.NETWORK === "goerli") {
   provider = new ethers.providers.JsonRpcProvider(process.env.NETWORK_URL);
   const privateKey = process.env.GOERLI_PRIVATE_KEY;
   signer = new ethers.Wallet(privateKey, provider);
+} else if (process.env.NETWORK === "polygon") {
+  poolJson = require(`../../contracts/deployments/matic/Pool.json`);
+  provider = new ethers.providers.JsonRpcProvider(process.env.NETWORK_URL);
+  const privateKey = process.env.POLYGON_PRIVATE_KEY;
+  signer = new ethers.Wallet(privateKey, provider);
 } else {
   //localhost
   poolJson = require(`../../contracts/deployments/localhost/Pool.json`);
@@ -23,24 +28,37 @@ try {
   console.log("ERROR", e);
 }
 
+export async function makeSureGameIsActive(gameId) {
+  const isGameActive = await pool.isGameActive(gameId);
+  if (isGameActive === 0) {
+    //ongoing state
+    return true;
+  } else {
+    return false;
+  }
+}
+
 // TODO CHANGE WHEN LAUNCHING NEW CONTRACT
 export async function makePayment(address, gameId) {
+  const gas = await provider.getGasPrice();
+  const gasLimit = 2200000;
   try {
-    // check here if game is active
-    // const isGameActive = await pool.isGameActive(gameId); should return 0 if game is in progress
-    // if (isGameActive !== 0) {
-    //   throw new Error("Game is not active")
-    // }
-    const tx = await pool.withdrawToWinner(address); // add gameID next launch
+    const tx = await pool.withdrawToWinner(address, gameId, {
+      gasPrice: gas,
+      gasLimit: gasLimit,
+    });
 
     const receipt = await tx.wait();
     console.log("receipt", receipt);
 
     return {
+      success: true,
       receipt,
     };
   } catch (e) {
+    console.log("error", e);
     return {
+      success: false,
       e,
     };
   }

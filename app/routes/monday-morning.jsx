@@ -1,9 +1,19 @@
 import { json } from "@remix-run/node";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useFetcher,
+  useLoaderData,
+} from "@remix-run/react";
 import { getUser, createUserSession } from "~/session.server";
 import { verifyLogin } from "~/models/monday-morning.server";
-import { getSpecificGame } from "~/models/game.server";
+import {
+  getSpecificGame,
+  getAllGames,
+  checkAnswers,
+} from "~/models/game.server";
 import { getContracts } from "~/services/contracts.server";
+import { ipfsUpload, mintNFT } from "~/models/nft.server";
 
 import * as React from "react";
 import WalletProvider from "~/components/WalletProvider";
@@ -14,31 +24,104 @@ import { validateEmail } from "~/utils";
 
 export async function loader({ request, params }) {
   const network = process.env.NETWORK || "localhost";
-  console.log("gameid", params.gameid);
+  const urlToSearch = new URL(request.url);
+  const gameId = urlToSearch.searchParams.get("gameId") ?? undefined;
 
-  const game = await getSpecificGame(params.gameid);
+  const game = await getSpecificGame(gameId);
   console.log("GAME--", game);
+  const allGames = await getAllGames();
   const contractObj = getContracts(network);
   const user = await getUser(request);
-  // if (user) {
-  //   return json({
-  //     user,
-  //   });
-  // } else {
-  //   return json({
-  //     user: null,
-  //   });
-  // }
+
   return json({
     user,
     game,
     contractObj,
     network,
+    allGames,
   });
 }
 
 export async function action({ request }) {
   const formData = await request.formData();
+
+  const type = formData.get("type");
+  if (type === "checkAnswers") {
+    const data = formData.get("data");
+    const game_name = formData.get("game_title");
+    const game_id = formData.get("game_id");
+    const gamer_winner = formData.get("game_winner");
+
+    console.log({ gamer_winner });
+
+    const parsedData = JSON.parse(data);
+    console.log({ parsedData });
+
+    const checkedData = await checkAnswers(parsedData);
+    console.log({ checkedData });
+
+    const doesItMatch = checkedData?.every((obj) => {
+      return Object.values(obj)[0] === true;
+    });
+
+    console.log(
+      "canwemint",
+      doesItMatch && parsedData.length === checkedData.length
+    );
+    if (doesItMatch && parsedData.length === checkedData.length) {
+      // const jsonMetaData = {
+      //   author: address,
+      //   name: questionTitleValue,
+      //   description: questionBodyValue,
+      //   program: selectedProgram?.name,
+      //   date: Date.now(),
+      // };
+      // mint NFT
+      try {
+        const arrayToAdd = parsedData.map((obj) => {
+          const object = {};
+          Object.keys(obj).forEach((value) => {
+            if (value === "questionText") {
+              object.questionText = obj[value];
+            } else {
+              object.answer = obj[value];
+            }
+          });
+          return object;
+        });
+
+        console.log(arrayToAdd);
+        // TODO Image or some other kind of media assett
+        const ipfsUploadObj = {
+          date: new Date(),
+          name: game_name, //
+          description: `Yellow in Green Trophy for game ${game_id}`,
+          attributes: arrayToAdd,
+          game_winner_address: gamer_winner,
+        };
+        console.log({ ipfsUploadObj });
+        //https://yellow-in-green.infura-ipfs.io/ipfs/QmNbAqjeS3smVEgj1mcBJWo1cuquXNaN8VRDMBQgqQBg93
+        const response = await ipfsUpload(JSON.stringify(ipfsUploadObj));
+        console.log(!!response, "testing");
+        const ipfsResponseObj = await response.json();
+        console.log({ ipfsResponseObj });
+
+        const ipfsUrl = `https://yellow-in-green.infura-ipfs.io/ipfs/${ipfsResponseObj.Hash}`;
+        console.log({ ipfsUrl });
+
+        const nftObject = await mintNFT(gamer_winner, ipfsUrl);
+        console.log({ nftObject });
+
+        // mint token
+
+        return nftObject;
+      } catch (error) {
+        console.error("err!", error);
+        throw new Error(error);
+      }
+    }
+  }
+
   const email = formData.get("email");
   const password = formData.get("password");
 
@@ -71,6 +154,7 @@ export const meta = () => {
   };
 };
 
+// TODO ADD TO UTILS
 export function usePrevious(value) {
   const ref = React.useRef();
   React.useEffect(() => {
@@ -83,6 +167,11 @@ export function MondayMorning(props) {
   const data = useLoaderData();
   console.log({ data }, props);
   const actionData = useActionData();
+
+  const fetcher = useFetcher();
+  const { address } = props;
+
+  // REFS
   const emailRef = React.useRef(null);
   const passwordRef = React.useRef(null);
   const gameRef = React.useRef(null);
@@ -90,31 +179,43 @@ export function MondayMorning(props) {
   const answerRef = React.useRef(null);
   const gameToReferenceRef = React.useRef(null);
   const makeGameActiveRef = React.useRef(null);
-  const { address } = props;
+
+  const makeGameInactiveRef = React.useRef(null);
+  const winlessGameIdRef = React.useRef(null);
+
+  // CUSTOM HOOK
   const previousAddress = usePrevious(address);
+
+  //STATE
   const [recentGameCreated, setRecentGameCreated] = React.useState(null);
   const [recentQuestionCreated, setRecentQuestionCreated] =
     React.useState(null);
   const [currentErrorMessage, setCurrentErrorMessage] = React.useState(null);
   const [mostCurrentGame, setMostCurrentGame] = React.useState(false);
 
+  const [allActiveGames, setAllActiveGames] = React.useState(null);
+  const [winlessGames, setAllWinlessGames] = React.useState(null);
+
+  const [validAddress, setValidAddress] = React.useState(false);
+
+  // HOOKS
   React.useEffect(() => {
     async function checkAddress() {
-      const content = await fetch(`api/portal?address=${address}`);
-      const data = await content.json();
-      console.log("data", data, address);
-      if (!data?.match) {
-        window.location.href = window.location.origin;
+      const content = await fetch(`/api/portal?address=${address}`);
+      const addressData = await content.json();
+      console.log({ addressData }, address);
+      // if (!addressData?.match) {
+      //   window.location.href = window.location.origin;
+      // }
+      if (addressData?.match) {
+        setValidAddress(true);
       }
     }
-    // if (!address) {
-    //   window.location.href = window.location.origin;
-    // }
     if (address && previousAddress !== address) {
       console.log("address", address, "previousaddress", previousAddress);
       checkAddress();
     }
-  }, [address, previousAddress, props]);
+  }, [address, previousAddress]);
 
   React.useEffect(() => {
     if (actionData?.errors?.email) {
@@ -125,10 +226,12 @@ export function MondayMorning(props) {
     console.log({ actionData });
   }, [actionData]);
 
+  // END HOOKS
+
   const createGame = async (event) => {
     event.preventDefault();
     const nameOfGame = gameRef.current.value;
-    const makeGameActive = makeGameActiveRef.current.checked;
+    const makeGameActive = makeGameActiveRef?.current?.checked ?? "false";
     if (nameOfGame.length > 7) {
       const fetchUrl = `/api/game-creation?game=${nameOfGame}&makeCurrent=${makeGameActive}`;
       const response = await fetch(fetchUrl);
@@ -187,10 +290,90 @@ export function MondayMorning(props) {
     }
   };
 
+  const getActiveGames = async () => {
+    try {
+      const response = await fetch("/api/get-active-games");
+      const json = await response.json();
+      console.log("json--", json);
+      setAllActiveGames(JSON.stringify(json));
+    } catch (error) {
+      console.log("ERR -", error);
+      setAllActiveGames(JSON.stringify(false));
+    }
+  };
+
+  const makeGameInactive = async () => {
+    const gameId = makeGameInactiveRef.current.value;
+    try {
+      const response = await fetch(`/api/make-game-inactive?gameId=${gameId}`);
+      const json = await response.json();
+      console.log("json--", json);
+      if (json.current === false) {
+        alert("updated success");
+      }
+      // setAllActiveGames(JSON.stringify(json));
+    } catch (error) {
+      console.log("ERR -", error);
+      // setAllActiveGames(JSON.stringify(false));
+    }
+  };
+
+  const getGamesWithNoWinner = async () => {
+    try {
+      const response = await fetch("/api/get-winless-games");
+      const json = await response.json();
+      console.log("json--", json);
+      setAllWinlessGames(JSON.stringify(json));
+    } catch (error) {
+      console.log("ERR -", error);
+      setAllWinlessGames(JSON.stringify(false));
+    }
+  };
+
+  const makeWinlessGameActive = async () => {
+    const gameId = winlessGameIdRef.current.value;
+    try {
+      const response = await fetch(
+        `/api/make-winless-game-active?gameId=${gameId}`
+      );
+      const json = await response.json();
+      console.log("json--", json);
+      if (json.current === true) {
+        alert("updated success");
+      }
+      // setAllActiveGames(JSON.stringify(json));
+    } catch (error) {
+      console.log("ERR -", error);
+      // setAllActiveGames(JSON.stringify(false));
+    }
+  };
+
+  const checkAnswersToGame = async (e) => {
+    e.preventDefault();
+    const submissionData = data.game?.questions.map((question) => {
+      const obj = {};
+      console.log(question.id);
+      obj[question.id] = document.getElementById(question.id).value;
+      obj.questionText = question.content;
+      return obj;
+    });
+
+    fetcher.submit(
+      {
+        type: "checkAnswers",
+        data: JSON.stringify(submissionData),
+        game_id: document.querySelector(`[name=game_id]`)?.value,
+        game_title: document.querySelector(`[name=game_title]`)?.value,
+        game_winner: document.querySelector(`[name=game_winner]`)?.value,
+      },
+      { method: "post" }
+    );
+  };
+
   return (
     <div className="flex min-h-full flex-col justify-center">
       <div className="mx-auto w-full max-w-md px-8">
-        {data.user ? (
+        {data.user && validAddress ? (
           <>
             {currentErrorMessage && (
               <h1 className="pt-1 text-lg text-red-700">
@@ -219,7 +402,7 @@ export function MondayMorning(props) {
               </div>
               {JSON.parse(mostCurrentGame) === null && (
                 <>
-                  <label for="make-active">Make Game active</label>
+                  <label htmlFor="make-active">Make Game active</label>
                   <input
                     name="make-active"
                     ref={makeGameActiveRef}
@@ -244,6 +427,62 @@ export function MondayMorning(props) {
             {mostCurrentGame !== false && (
               <p>Most current Game: {mostCurrentGame.toString()}</p>
             )}
+            <div className="my-6 border border-black p-4">
+              <h1 className="mb-2 font-bold">Manage Active Games</h1>
+              <button
+                onClick={getActiveGames}
+                className="mt-6 w-full rounded bg-blue-500 py-2 px-4 text-white"
+              >
+                Get Active Games
+              </button>
+              {allActiveGames && (
+                <div>
+                  {allActiveGames}
+                  <div className="flex flex-wrap p-4">
+                    <input
+                      ref={makeGameInactiveRef}
+                      type="text"
+                      placeholder="Game ID"
+                      className="w-full p-2"
+                    />
+                    <button
+                      className="mt-6 w-full rounded bg-blue-500 py-2 px-4 text-white "
+                      onClick={makeGameInactive}
+                    >
+                      Make Inactive
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="my-6 border border-black p-4">
+              <h1 className="mb-2 font-bold">get all games with no winner</h1>
+              <button
+                onClick={getGamesWithNoWinner}
+                className="mt-6 w-full rounded bg-blue-500 py-2 px-4 text-white"
+              >
+                Get Games with no Winner
+              </button>
+              {winlessGames && (
+                <div>
+                  {winlessGames}
+                  <div className="flex flex-wrap p-4">
+                    <input
+                      type="text"
+                      className="w-full p-2"
+                      placeholder="make game active"
+                      ref={winlessGameIdRef}
+                    />
+                    <button
+                      className="mt-6 w-full rounded bg-blue-500 py-2 px-4 text-white"
+                      onClick={makeWinlessGameActive}
+                    >
+                      Make Game active game
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
             {recentGameCreated && (
               <>
                 <h4 className="mb-2">
@@ -301,6 +540,55 @@ export function MondayMorning(props) {
                 </Form>
               </>
             )}
+            <section className="m-8 border border-black p-6">
+              <h1 className="mb-2 text-xl font-bold">
+                Game requested in url query string default to first
+              </h1>
+              <p>Game requested in url - name: {data.game?.name}</p>
+              <p>Game requested in url - id: {data.game?.id}</p>
+              <h4 className="my-4">QUESTIONS!</h4>
+              <Form onSubmit={checkAnswersToGame}>
+                {data.game?.questions.map((question) => {
+                  return (
+                    <div key={question.id}>
+                      <p>
+                        question id: {question.id} - question text:{" "}
+                        {question.content}
+                      </p>
+                      <input type="text" id={question.id} name={question.id} />
+                    </div>
+                  );
+                })}
+                <input
+                  type="hidden"
+                  name="game_title"
+                  value={data.game?.name}
+                />
+                <input type="hidden" name="game_id" value={data.game?.id} />
+                <input
+                  type="hidden"
+                  name="game_winner"
+                  value={data.game?.winnerId}
+                />
+                <button className="btn my-4" type="submit">
+                  submit
+                </button>
+              </Form>
+            </section>
+            <section className="m-4 border border-black p-6">
+              <h1>All Games</h1>
+              <div className="flex flex-wrap justify-between">
+                {data.allGames.map((game, index) => {
+                  return (
+                    <div key={index} className="mb-4">
+                      <p className="font-bold">name: {game.name}</p>
+                      <p className="italic">id: {game.id}</p>
+                      <p className="pt-2">winner: {game.winnerId}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
           </>
         ) : (
           <Form method="post" className="space-y-6">

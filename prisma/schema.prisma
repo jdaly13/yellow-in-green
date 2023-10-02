@@ -1,10 +1,16 @@
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+  includeRelationFromFields = true
+  disabled = true
 }
 
 model User {
@@ -17,6 +23,7 @@ model User {
   // password Password?
   // notes    Note[]
   submissions Submission[]
+  invalidSubmissions IndecentProposal[]
   currentGame Game?        @relation(fields: [gameId], references: [id])
   gameId      String?
 }
@@ -48,6 +55,7 @@ model Question {
   game       Game         @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   gameId     String
   submission Submission[]
+  invalidSubmission IndecentProposal[]
 }
 
 model Answer {
@@ -65,7 +73,19 @@ model Game {
   questions   Question[]
   winnerId    String?      
   submissions Submission[]
+  invalidSubmissions IndecentProposal[]
   user        User[]        
+}
+
+model IndecentProposal {
+  id          String   @id @default(cuid())
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  question    Question @relation(fields: [questionId], references: [id])
+  questionId  String   
+  answer      String
+  game        Game     @relation(fields: [gameId], references: [id])
+  gameId      String
 }
 
 model Submission {

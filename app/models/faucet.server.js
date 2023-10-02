@@ -5,15 +5,24 @@ let provider;
 let signer;
 let faucet;
 let faucetJson;
+let triviaJson;
 
 if (process.env.NETWORK === "goerli") {
   faucetJson = require(`../../contracts/deployments/goerli/Faucet.json`);
+  triviaJson = require("../../contracts/deployments/goerli/TriviaToken.json");
   provider = new ethers.providers.JsonRpcProvider(process.env.NETWORK_URL);
   const privateKey = process.env.GOERLI_PRIVATE_KEY;
+  signer = new ethers.Wallet(privateKey, provider);
+} else if (process.env.NETWORK === "polygon") {
+  faucetJson = require(`../../contracts/deployments/matic/Faucet.json`);
+  triviaJson = require("../../contracts/deployments/matic/TriviaToken.json");
+  provider = new ethers.providers.JsonRpcProvider(process.env.NETWORK_URL);
+  const privateKey = process.env.POLYGON_PRIVATE_KEY;
   signer = new ethers.Wallet(privateKey, provider);
 } else {
   //localhost
   faucetJson = require(`../../contracts/deployments/localhost/Faucet.json`);
+  triviaJson = require("../../contracts/deployments/localhost/TriviaToken.json");
   provider = new ethers.providers.JsonRpcProvider();
   signer = provider.getSigner();
 }
@@ -24,10 +33,15 @@ try {
 }
 
 export async function makeItRain(address) {
+  const gas = await provider.getGasPrice();
+  const gasLimit = 2200000;
   try {
     const balance = await faucet.balance();
     console.log("balance", ethers.utils.formatEther(balance));
-    const tx = await faucet.fund(address);
+    const tx = await faucet.fund(address, {
+      gasPrice: gas,
+      gasLimit: gasLimit,
+    });
 
     const receipt = await tx.wait();
     console.log("receipt", receipt);
@@ -35,6 +49,7 @@ export async function makeItRain(address) {
     return {
       receipt,
       balance,
+      tokenAddress: triviaJson.address,
     };
   } catch (e) {
     return {

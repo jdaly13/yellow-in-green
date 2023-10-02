@@ -3,6 +3,8 @@ import { useMemo } from "react";
 
 const DEFAULT_REDIRECT = "/";
 
+export const TOTAL_MAXIMUM_INCORRECT_ANSWERS = 30;
+
 /**
  * This should be used any time the redirect path is user-provided
  * (Like the query string on our login/signup pages). This avoids

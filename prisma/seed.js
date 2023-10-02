@@ -6,18 +6,23 @@ const prisma = new PrismaClient();
 
 async function seed() {
   const email = process.env.EMAIL;
+  const password = process.env.PASSWORD;
   const hashedPassword = await bcrypt.hash(process.env.PASSWORD, 10);
 
-  await prisma.adminUser.create({
-    data: {
-      email,
-      password: {
-        create: {
-          hash: hashedPassword,
+  if (email && password) {
+    await prisma.adminUser.create({
+      data: {
+        email,
+        password: {
+          create: {
+            hash: hashedPassword,
+          },
         },
       },
-    },
-  });
+    });
+  } else {
+    console.log("faulty");
+  }
 
   // const firstGame = await prisma.game.create({
   //   data: {

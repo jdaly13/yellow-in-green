@@ -1,6 +1,7 @@
 import { json } from "@remix-run/server-runtime";
 import { prisma } from "~/db.server";
 import bcrypt from "bcryptjs";
+import { sendEmail } from "~/services/email.server";
 export async function getCurrentGame() {
   return prisma.game.findFirst({
     where: {
@@ -8,6 +9,51 @@ export async function getCurrentGame() {
     },
     include: {
       questions: true,
+      user: true,
+    },
+  });
+}
+
+export async function getAllActiveGames() {
+  return prisma.game.findMany({
+    where: {
+      current: true,
+    },
+    include: {
+      questions: true,
+    },
+  });
+}
+
+export async function getWinlessGames() {
+  return prisma.game.findMany({
+    where: {
+      winnerId: null,
+    },
+    include: {
+      questions: true,
+    },
+  });
+}
+
+export async function makeGameInactive(gameId) {
+  return prisma.game.update({
+    where: {
+      id: gameId,
+    },
+    data: {
+      current: false,
+    },
+  });
+}
+
+export async function makeGameActive(gameId) {
+  return prisma.game.update({
+    where: {
+      id: gameId,
+    },
+    data: {
+      current: true,
     },
   });
 }
@@ -20,8 +66,13 @@ export async function getSpecificGame(id) {
     },
     include: {
       questions: true,
+      user: true,
     },
   });
+}
+
+export async function getAllGames() {
+  return prisma.game.findMany();
 }
 
 export async function checkAnswers(data) {
@@ -53,8 +104,8 @@ export async function checkAnswers(data) {
     array.push({
       [data[i][questionWithAnswer.id]]: isValid,
     });
-    return array;
   }
+  return array;
 }
 
 export async function checkAnswer(question, answer) {
@@ -75,7 +126,33 @@ export async function checkAnswer(question, answer) {
   return isValid;
 }
 
+export async function createIncorrectSubmission(
+  user,
+  question,
+  answer,
+  gameId
+) {
+  return prisma.indecentProposal.create({
+    data: {
+      answer: answer,
+      createdById: user,
+      questionId: question,
+      gameId,
+    },
+  });
+}
+
+export async function getIncorrectSubmissionsByUserAndGameId(user, gameId) {
+  return prisma.indecentProposal.count({
+    where: {
+      createdById: user,
+      gameId: gameId,
+    },
+  });
+}
+
 export async function createUserSubmission(user, question, answer, gameId) {
+  //TODO call getIncorrectSubmissionsByUserAndGameId to make sure user can't submit if they have already surpassed limit
   const hashedAnswer = await bcrypt.hash(answer, 10);
   return prisma.submission.create({
     data: {
@@ -132,9 +209,21 @@ export async function declareWinner(game, userId) {
       current: false,
     },
   });
+  try {
+    await sendEmail({ gameId: game, winnerId: user.address });
+  } catch (error) {
+    console.log(error);
+    return {
+      winnerUpdate,
+      winnerAddress: user.address,
+      emailSuccess: false,
+    };
+  }
+
   return {
     winnerUpdate,
     winnerAddress: user.address,
+    emailSuccess: true,
   };
 }
 
@@ -191,3 +280,11 @@ export async function createQuestion(questionText, answerText, gameId) {
     },
   });
 }
+
+// export async function getUsersByGame(gameID) {
+//   return prisma.user.findMany({
+//     where: {
+//       gameId: gameID,
+//     },
+//   });
+// }

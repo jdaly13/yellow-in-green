@@ -25,7 +25,7 @@ export default function Header({
     }
   };
   return (
-    <header className="my-8 flex justify-between ">
+    <header className="my-4 flex flex-col-reverse px-4 lg:my-8 lg:flex-row lg:justify-between lg:px-0 ">
       {isConnected && address && chain?.name.toLowerCase() === network && (
         <BalanceInfo
           setTokenData={setTokenData}
@@ -43,10 +43,16 @@ export default function Header({
         </button>
       )}
       {isConnected && (
-        <div className="flex flex-col justify-end">
-          {chain && <p className="pb-1">Connected to: {chain.name}</p>}
+        <div className="mb-4 flex flex-col justify-center lg:mb-0 lg:justify-end">
+          {chain && (
+            <p className="pb-1 text-center lg:text-left">
+              Connected to: {chain.name}
+            </p>
+          )}
           {address && (
-            <p className="mb-4">Address: {truncateAddress(address)} </p>
+            <p className="mb-4 text-center lg:text-left">
+              Address: {truncateAddress(address)}{" "}
+            </p>
           )}
           <button onClick={disconnect} className="btn-primary btn block py-2">
             Disconnect

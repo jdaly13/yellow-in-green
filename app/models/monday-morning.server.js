@@ -10,14 +10,19 @@ export async function verifyLogin(email, password) {
     },
   });
 
+  console.log({ userWithPassword });
+
   if (!userWithPassword || !userWithPassword.password) {
     return null;
   }
+
+  console.log("HERE!!!");
 
   const isValid = await bcrypt.compare(
     password,
     userWithPassword.password.hash
   );
+  console.log("not valid");
 
   if (!isValid) {
     return null;

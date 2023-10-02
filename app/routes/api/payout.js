@@ -1,6 +1,6 @@
 import { json } from "@remix-run/server-runtime";
 import { checkWinner } from "~/models/game.server";
-import { makePayment } from "~/models/payout.server";
+import { makePayment, makeSureGameIsActive } from "~/models/payout.server";
 
 export async function loader({ request }) {
   try {
@@ -13,16 +13,30 @@ export async function loader({ request }) {
     console.log("confirmWinner", confirmWinner);
 
     if (confirmWinner) {
-      const receipt = await makePayment(address, game);
-      return json({
-        success: true,
-        receipt,
-      });
+      const isGameActive = await makeSureGameIsActive(game);
+      console.log({ isGameActive });
+      if (isGameActive) {
+        const receipt = await makePayment(address, game);
+        return json({
+          success: true,
+          receipt,
+          message: "Payment has been made",
+        });
+      } else {
+        return json({
+          success: false,
+          message:
+            "This game is no longer Active! Payment has either been made or will be",
+        });
+      }
     }
   } catch (error) {
     console.log("ERRRORORORORO", error);
     return json({
+      success: false,
       error: error,
+      message:
+        "An Error occurred with our servers - payment will be made manually if not done already",
     });
   }
 }

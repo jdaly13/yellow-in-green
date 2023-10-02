@@ -16,6 +16,9 @@ PRISMA STUDIO (for Prod)
 https://stackoverflow.com/questions/73335287/how-to-access-prisma-studio-when-the-app-is-already-deployed-on-heroku
 https://www.prisma.io/docs/data-platform/about
 
+https://github.com/prisma/studio/issues/895#issuecomment-1083051249
+https://github.com/prisma/studio/issues/790
+
 ## FAUCET
 
 https://raw.githubusercontent.com/harmony-one/token-faucet-demo-dapp/main/contracts/Faucet.sol
@@ -53,7 +56,10 @@ https://medium.com/@prashantramnyc/difference-between-session-cookies-vs-jwt-jso
 Wagmi docs version
 https://0.7.x.wagmi.sh/docs/WagmiConfig
 
-Tutoria - sports betting daPP - https://medium.com/coinmonks/create-a-sports-betting-dapp-on-the-ethereum-blockchain-part-1-1f69f908b939
+Wallet Connect Web3 modal
+https://docs.walletconnect.com/2.0/web3modal/react/installation
+
+Tutorial - sports betting daPP - https://medium.com/coinmonks/create-a-sports-betting-dapp-on-the-ethereum-blockchain-part-1-1f69f908b939
 
 Hardhat Deploy and Etherscan verify
 https://blog.chain.link/how-to-verify-smart-contract-on-etherscan-hardhat/
@@ -82,4 +88,74 @@ for example algorand you would get that nft using indexer and then transfer that
 Interesting article
 https://medium.com/coinmonks/how-to-find-your-nft-on-ipfs-e51bc5e7c8a1
 
-This is aggravating
+## External Scripts Wallet Connect - WAGMI
+
+// Script using for testing purposes to test a backend call of 5 seconds
+
+```
+return new Promise((resolve) => {
+  setTimeout(resolve, 5000);
+}).then(() => {
+  return json({ test: "test" });
+});
+```
+
+Wallet Connect - https://cloud.walletconnect.com/app
+Wagmi with Wallet Connect and wallet Modal
+https://0.12.x.wagmi.sh/core/connectors/walletConnect
+https://wagmi.sh/react/migration-guide#012x-breaking-changes
+
+https://docs.walletconnect.com/advanced/migration-from-v1.x/dapps#web3modal-v20
+https://cloud.walletconnect.com/app/project?uuid=7ec5a112-551e-4ed3-9dd2-92c0e7dbd32a
+https://docs.walletconnect.com/web3modal/react/about
+https://docs.walletconnect.com/web3modal/v2/react/wagmi/installation
+
+## ICONS
+
+https://heroicons.com/
+
+TESTNETS
+Goerli Fauces - https://goerli.etherscan.io/address/0x980aD1E1aBca7994e46702fE18A4bAF009081746
+https://goerli.etherscan.io/address/0xE2a9Cc57D7d34D71F73ACa68c3e145E4d423C233
+
+`SELECT winnerID from GAME WHERE id = "cleyxi99u0000gylt0o37nb6p";`
+NODEMAILER LINKS - EMAIL
+https://github.com/jdaly13/yellow-in-gree n/issues/18
+
+## SWITCHING TO MYSQL
+
+https://www.prisma.io/docs/concepts/components/prisma-migrate/prisma-migrate-limitations-issues#you-cannot-automatically-switch-database-providers
+
+Steps
+Database url on cloud run needs to include socket query string. Version 3
+/cloudsq/{instance name}
+This is stored as a secret
+
+On cloud build database url needs to be localhost - \_DATABASE_URL_LOCALHOST
+yellowingreen:us-central1:yellow-in-green-1-dev
+Saved as ENV variable/secret
+
+https://www.prisma.io/docs/concepts/database-connectors/mysql
+
+https://stackoverflow.com/questions/74424929/what-is-the-postgres-database-url-to-connect-cloud-run-to-postgres-on-cloud-sql/74438667?noredirect=1#comment131499113_74438667
+Related below
+https://cloud.google.com/sql/docs/mysql/connect-run
+
+Both explain where you need socket path you created in cloud build
+
+Cloud build
+https://stackoverflow.com/questions/74891893/google-cloud-build-cloud-run-cloud-sql-prisma-migration/74891894?noredirect=1#comment135569389_74891894
+
+Connect from cloud run documentation
+https://cloud.google.com/sql/docs/mysql/connect-run
+
+Connect to CloudSql for mySql using the Cloud-sql auth proxy
+https://cloud.google.com/sql/docs/mysql/connect-instance-auth-proxy
+
+Another somewhat. Helpful question/answer page
+https://stackoverflow.com/questions/52352103/run-node-js-database-migrations-on-google-cloud-sql-during-google-cloud-build/64599510#64599510
+
+## END OF - SWITCHING TO MYSQL
+
+WalletConnect
+https://cloud.walletconnect.com/app/project?uuid=7ec5a112-551e-4ed3-9dd2-92c0e7dbd32a
