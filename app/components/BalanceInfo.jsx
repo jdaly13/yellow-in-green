@@ -18,7 +18,7 @@ export default function BalanceInfo({
 }) {
   const [poolButton, setPoolButton] = useState(false);
   const [prizeAmount, setPrizeAmount] = useState(null);
-  const { contracts, game } = useContext(ContractContext);
+  const { contracts, game, network } = useContext(ContractContext);
   console.log({ game });
 
   const { data } = useContractRead({
@@ -59,12 +59,10 @@ export default function BalanceInfo({
   useEffect(() => {
     if (activePlayer?.data && utils.formatEther(activePlayer.data) < 1) {
       setPoolButton(true);
+      setDeposit(false);
     }
     if (activePlayer?.data && utils.formatEther(activePlayer.data) >= 1) {
       setDeposit(true);
-    }
-    if (activePlayer?.data && utils.formatEther(activePlayer.data) < 1) {
-      setDeposit(false);
     }
   }, [activePlayer, deposit, setDeposit]);
 
@@ -90,7 +88,15 @@ export default function BalanceInfo({
       )}
       {prizeAmount && game?.current && (
         <p className="text-center font-bold lg:text-left">
-          Prize amount: {prizeAmount} TRIVIA Tokens
+          Prize includes:{" "}
+          {game.nativePayoutAmount && (
+            <span>
+              {network !== "polygon"
+                ? `${game.nativePayoutAmount} ${network} Ethereum,`
+                : `${game.nativePayoutAmount} Polygon Matic, `}
+            </span>
+          )}{" "}
+          {prizeAmount} TRIVIA Tokens, 1 Trophy NFT
         </p>
       )}
       {game?.user?.length > 3 && game?.current && (

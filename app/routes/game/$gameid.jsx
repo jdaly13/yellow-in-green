@@ -216,14 +216,15 @@ function GameBody(props) {
       setButtonDisabled(false);
       setProcessStage(3);
       if (responseJson.success) {
-        setToastMessage("Success Check your wallet for prize");
+        const nativeTokentext = responseJson.payoutTx
+          ? `${data.network} transfer transaction ${responseJson.payoutTx.hash}`
+          : "";
+        setToastMessage(
+          `Success! Trivia transer transaction ${responseJson.receipt?.hash} - ${nativeTokentext} - Save these hashes and track on block explorers`
+        );
       } else {
-        setToastMessage(responseJson.message);
+        setToastMessage(responseJson?.message);
       }
-
-      // setTimeout(() => {
-      //   setProcessStage(0);
-      // }, 10000);
     } catch (error) {
       console.log(error);
       setButtonDisabled(false);
@@ -258,21 +259,37 @@ function GameBody(props) {
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span className="uppercase">
-                Congrats You won The Game - Claim your prize below!
-              </span>
+              <span className="uppercase">Congrats You won The Game</span>
             </div>
           </div>
-          <div className="my-4">
-            <button
-              className="btn-success btn border-primary disabled:opacity-50"
-              onClick={payoutWinner}
-              disabled={buttonDisabled}
-            >
-              Claim Your Tokens!
-            </button>
-          </div>
-          {/* TODO CREATE BUTTON FOR USER TO RECEIVE FUNDS*/}
+          {data.game?.winner?.id ? (
+            <>
+              {data.game?.winner?.triviaTransaction && (
+                <h4 className="my-4">
+                  {" "}
+                  Trivia Transaction:{" "}
+                  <span> {data.game?.winner?.triviaTransaction}</span>{" "}
+                </h4>
+              )}
+              {data.game?.winner?.nativeTransaction && (
+                <h4 className="my-4">
+                  {" "}
+                  {data.network} Transaction:{" "}
+                  <span> {data.game?.winner?.nativeTransaction}</span>{" "}
+                </h4>
+              )}
+            </>
+          ) : (
+            <div className="my-4">
+              <button
+                className="btn-success btn border-primary disabled:opacity-50"
+                onClick={payoutWinner}
+                disabled={buttonDisabled}
+              >
+                Claim Your Prize
+              </button>
+            </div>
+          )}
         </>
       );
     }
@@ -283,13 +300,16 @@ function GameBody(props) {
     ) {
       return (
         <h2>
-          This game is not current and not playable stay tuned for more upcoming
-          games
+          This game is not current and was won by {data.game.winnerId} <br />{" "}
+          stay tuned for more upcoming games
         </h2>
       );
     }
     return <></>;
   };
+
+  //blockchain  isConnected - deposit
+  //database  data.game?.current - disableGame - data.game.winnerId -
 
   return (
     <>
@@ -370,7 +390,7 @@ function GameBody(props) {
         {!data.game && <p>This is not the game you are looking for</p>}
       </section>
       <div className="modal modal-bottom sm:modal-middle" id="prize-modal">
-        <div className="modal-box">
+        <div className="modal-box w-11/12 sm:max-w-3xl">
           {processStage === 1 && (
             <div className="pending flex items-center">
               <svg
@@ -460,29 +480,6 @@ function GameBody(props) {
           </div>
         </div>
       )}
-
-      {/* {successMessage && (
-        <div className="toast-end toast">
-          <div className="alert alert-success shadow-lg">
-            <div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 flex-shrink-0 stroke-current"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>{successMessage}</span>
-            </div>
-          </div>
-        </div>
-      )} */}
     </>
   );
 }

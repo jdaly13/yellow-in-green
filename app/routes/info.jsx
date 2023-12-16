@@ -57,6 +57,7 @@ export default function Index() {
                         Chrome store
                       </a>
                     </li>
+                    {/* TODO Change based onNetwork */}
                     <li>
                       Enable Polygon on your wallet -{" "}
                       <a

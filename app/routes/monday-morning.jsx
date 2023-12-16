@@ -14,6 +14,7 @@ import {
 } from "~/models/game.server";
 import { getContracts } from "~/services/contracts.server";
 import { ipfsUpload, mintNFT } from "~/models/nft.server";
+import { updateWinnerWithNftTransaction } from "~/models/winner.server";
 
 import * as React from "react";
 import WalletProvider from "~/components/WalletProvider";
@@ -77,6 +78,8 @@ export async function action({ request }) {
       //   date: Date.now(),
       // };
       // mint NFT
+      let ipfsUrl;
+      let nftObject;
       try {
         const arrayToAdd = parsedData.map((obj) => {
           const object = {};
@@ -106,18 +109,30 @@ export async function action({ request }) {
         const ipfsResponseObj = await response.json();
         console.log({ ipfsResponseObj });
 
-        const ipfsUrl = `https://yellow-in-green.infura-ipfs.io/ipfs/${ipfsResponseObj.Hash}`;
+        ipfsUrl = `https://yellow-in-green.infura-ipfs.io/ipfs/${ipfsResponseObj.Hash}`;
         console.log({ ipfsUrl });
 
-        const nftObject = await mintNFT(gamer_winner, ipfsUrl);
+        nftObject = await mintNFT(gamer_winner, ipfsUrl);
         console.log({ nftObject });
+        const dbUpdate = await updateWinnerWithNftTransaction(
+          gamer_winner,
+          nftObject?.receipt?.transactionHash
+        );
+        console.log({ dbUpdate });
 
         // mint token
 
-        return nftObject;
+        return json({
+          receipt: nftObject?.receipt,
+          tokenUri: nftObject?.tokenUri,
+        });
       } catch (error) {
         console.error("err!", error);
-        throw new Error(error);
+        return json({
+          receipt: nftObject || null,
+          tokenUri: ipfsUrl || null,
+          error: error?.message || "an error occurred",
+        });
       }
     }
   }
@@ -176,6 +191,7 @@ export function MondayMorning(props) {
   const passwordRef = React.useRef(null);
   const gameRef = React.useRef(null);
   const questionRef = React.useRef(null);
+  const nativeTokenAmountRef = React.useRef(null);
   const answerRef = React.useRef(null);
   const gameToReferenceRef = React.useRef(null);
   const makeGameActiveRef = React.useRef(null);
@@ -232,8 +248,9 @@ export function MondayMorning(props) {
     event.preventDefault();
     const nameOfGame = gameRef.current.value;
     const makeGameActive = makeGameActiveRef?.current?.checked ?? "false";
+    const nativeTokenAmount = nativeTokenAmountRef.current.value;
     if (nameOfGame.length > 7) {
-      const fetchUrl = `/api/game-creation?game=${nameOfGame}&makeCurrent=${makeGameActive}`;
+      const fetchUrl = `/api/game-creation?game=${nameOfGame}&makeCurrent=${makeGameActive}&nativeAmount=${nativeTokenAmount}`;
       const response = await fetch(fetchUrl);
       const gameJson = await response.json();
       console.log(gameJson);
@@ -395,8 +412,26 @@ export function MondayMorning(props) {
                     defaultValue=""
                     name="game"
                     type="text"
-                    className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                    className="mb-2 w-full rounded border border-gray-500 px-2 py-1 text-lg"
                     placeholder="Name of new game"
+                  />
+                  <label
+                    htmlFor="payoutAmount"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Payout Amount in Native currency
+                  </label>
+                  <input
+                    ref={nativeTokenAmountRef}
+                    id="native_token"
+                    defaultValue="0.01"
+                    name="payoutAmount"
+                    type="number"
+                    min="0.01"
+                    max="10000000000"
+                    step="0.01"
+                    className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                    placeholder="Native Token Payout Amount"
                   />
                 </div>
               </div>
@@ -574,6 +609,15 @@ export function MondayMorning(props) {
                   submit
                 </button>
               </Form>
+              {actionData?.tokenUri && (
+                <div className="my-4">
+                  <p>token uri: {actionData?.tokenUri}</p>
+                  <p>
+                    transaction receipt {actionData?.receipt.transactionHash} on{" "}
+                    {data.network}
+                  </p>
+                </div>
+              )}
             </section>
             <section className="m-4 border border-black p-6">
               <h1>All Games</h1>

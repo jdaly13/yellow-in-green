@@ -71,10 +71,25 @@ model Game {
   updatedAt   DateTime     @updatedAt
   current     Boolean      @default(false)
   questions   Question[]
-  winnerId    String?      
+  winnerId    String?
+  winner      Winner?     
   submissions Submission[]
   invalidSubmissions IndecentProposal[]
-  user        User[]        
+  user        User[]
+  nativePayoutAmount String?        
+}
+
+model Winner {
+  id String @unique
+  triviaTransaction String?
+  nativeTransaction String?
+  nftTransaction String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  game       Game    @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  gameId     String  @unique
+  network    String?
+
 }
 
 model IndecentProposal {

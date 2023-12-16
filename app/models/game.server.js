@@ -67,6 +67,7 @@ export async function getSpecificGame(id) {
     include: {
       questions: true,
       user: true,
+      winner: true,
     },
   });
 }
@@ -186,7 +187,10 @@ export async function checkWinner(userId, game) {
     },
   });
   if (gameWithQuestions.questions.length === user.submissions.length) {
-    return true;
+    return {
+      nativePayout: gameWithQuestions?.nativePayoutAmount,
+      confirmed: true,
+    };
   }
   return false;
 }
@@ -257,12 +261,13 @@ export async function checkAndDeclareWinner(id, game, submission) {
   }
 }
 
-export async function createGame(game, makeActive) {
+export async function createGame(game, makeActive, nativeAmount) {
   const active = makeActive === "true" ? true : false;
   return prisma.game.create({
     data: {
       name: game,
       current: active,
+      nativePayoutAmount: nativeAmount,
     },
   });
 }

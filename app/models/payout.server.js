@@ -1,4 +1,4 @@
-const { ethers } = require("ethers");
+const { ethers, utils } = require("ethers");
 require("dotenv").config();
 
 let provider;
@@ -48,18 +48,42 @@ export async function makePayment(address, gameId) {
       gasLimit: gasLimit,
     });
 
-    const receipt = await tx.wait();
-    console.log("receipt", receipt);
+    console.log("withdrawtoken", tx);
+
+    // const receipt = await tx.wait();
+    // console.log("receipt", receipt);
 
     return {
       success: true,
-      receipt,
+      tx,
     };
   } catch (e) {
     console.log("error", e);
     return {
       success: false,
+      tx: "error",
       e,
     };
+  }
+}
+
+export async function makeNativePayment(address, gameId, payoutAmount) {
+  try {
+    const gas = await provider.getGasPrice();
+    const gasLimit = 2200000;
+    const txParameters = {
+      to: address,
+      value: utils.parseEther(payoutAmount),
+      gasPrice: gas,
+      gasLimit,
+    };
+    const tx = await signer.sendTransaction(txParameters);
+    console.log({ tx });
+    return tx;
+    // const txwait = await tx.wait();
+    // console.log({ txwait });
+  } catch (e) {
+    console.log({ e });
+    return e;
   }
 }

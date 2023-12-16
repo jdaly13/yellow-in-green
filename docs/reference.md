@@ -159,3 +159,55 @@ https://stackoverflow.com/questions/52352103/run-node-js-database-migrations-on-
 
 WalletConnect
 https://cloud.walletconnect.com/app/project?uuid=7ec5a112-551e-4ed3-9dd2-92c0e7dbd32a
+
+
+## Dev Operations
+
+App is hosted on Cloud Run  
+MySql Db is hotsted on Cloud SQL
+
+Cloud Build is used for CI/CD Pipeline
+
+Current Setup 
+
+When Changed are pushed to the mySql Branch - it starts a process
+
+Current setup is to use Cloud Sql Auth Proxy in Built Step to allow connections to DB
+
+Cloud Build reads from our cloudbuild.yaml file in the repo
+
+Created using inspiration from these questions
+https://stackoverflow.com/questions/74891893/google-cloud-build-cloud-run-cloud-sql-prisma-migration/74891894?noredirect=1#comment135569389_74891894
+
+https://stackoverflow.com/questions/52352103/run-node-js-database-migrations-on-google-cloud-sql-during-google-cloud-build/64599510#64599510
+
+//Socket Part
+https://stackoverflow.com/questions/72118668/cloud-functions-prismaclientinitializationerror-cant-reach-database-server-a
+
+https://cloud.google.com/sql/docs/mysql/connect-build
+
+
+cloud sql proxy links
+https://cloud.google.com/sql/docs/mysql/sql-proxy
+https://cloud.google.com/sql/docs/mysql/connect-auth-proxy#tcp-sockets
+https://github.com/GoogleCloudPlatform/cloud-sql-proxy/blob/main/README.md
+https://medium.com/google-cloud/tagged/cloud-sql-proxy
+
+MYSQL quickstarts
+https://cloud.google.com/sql/docs/mysql/quickstarts  
+
+# Steps
+in the Migrate Step
+we get a copy of cloud sql auth proxy
+connect via TCP using the instance name which is saved in cloud build trigger substitution variables
+we then run npx prisma migrate deploy which applies the migrations file to our db
+
+When this is complete - we build push then deploy
+
+Cloud Build and Cloud Run use different secrets and Env Variables
+
+
+
+
+
+
