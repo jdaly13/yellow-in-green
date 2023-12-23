@@ -5,6 +5,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["extendedWhereUnique"]
 }
 
 generator erd {
@@ -80,7 +81,7 @@ model Game {
 }
 
 model Winner {
-  id String @unique
+  id String
   triviaTransaction String?
   nativeTransaction String?
   nftTransaction String?

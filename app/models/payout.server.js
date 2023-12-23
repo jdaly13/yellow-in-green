@@ -79,9 +79,9 @@ export async function makeNativePayment(address, gameId, payoutAmount) {
     };
     const tx = await signer.sendTransaction(txParameters);
     console.log({ tx });
+    const nativetxwait = await tx.wait();
+    console.log({ nativetxwait });
     return tx;
-    // const txwait = await tx.wait();
-    // console.log({ txwait });
   } catch (e) {
     console.log({ e });
     return e;

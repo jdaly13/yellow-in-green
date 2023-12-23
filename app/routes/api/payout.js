@@ -22,7 +22,6 @@ export async function loader({ request }) {
       console.log({ isGameActive });
       if (isGameActive) {
         let payoutTx = false;
-        const makePaymentResponse = await makePayment(address, game);
         if (winnerObj.nativePayout) {
           payoutTx = await makeNativePayment(
             address,
@@ -30,6 +29,8 @@ export async function loader({ request }) {
             winnerObj.nativePayout
           );
         }
+        const makePaymentResponse = await makePayment(address, game);
+
         await updateTxInGame(makePaymentResponse.tx, payoutTx, game, address);
         return json({
           success: true,
