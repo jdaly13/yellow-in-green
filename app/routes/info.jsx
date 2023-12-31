@@ -1,11 +1,12 @@
 import { json } from "@remix-run/node";
 import { getCurrentGame } from "~/models/game.server";
 import { useLoaderData, Link } from "@remix-run/react";
+import { mixPanelPageView } from "~/models/mixpanel.server";
 
 export async function loader({ request }) {
   const currentGame = await getCurrentGame(request);
   const network = process.env.NETWORK || "localhost";
-
+  mixPanelPageView(request, { currentGame: currentGame?.id });
   return json({
     currentGame,
     network,

@@ -16,11 +16,13 @@ import { TOTAL_MAXIMUM_INCORRECT_ANSWERS } from "~/utils";
 import ContractContextWrapper from "~/components/ContractContextWrapper";
 import WalletProvider from "~/components/WalletProvider";
 import Wrapper from "~/components/Wrapper";
+import { mixPanelPageView } from "~/models/mixpanel.server";
 
-export async function loader({ params }) {
+export async function loader({ request, params }) {
   const network = process.env.NETWORK || "localhost";
   const game = await getSpecificGame(params.gameid);
   const contractObj = getContracts(network);
+  mixPanelPageView(request, { currentGame: params.gameid });
   return json({ game, contractObj, network });
 }
 

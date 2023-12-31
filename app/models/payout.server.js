@@ -79,8 +79,11 @@ export async function makeNativePayment(address, gameId, payoutAmount) {
     };
     const tx = await signer.sendTransaction(txParameters);
     console.log({ tx });
-    const nativetxwait = await tx.wait();
-    console.log({ nativetxwait });
+    // https://github.com/ethers-io/ethers.js/issues/444
+    // need to manually set this as transactions
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // const nativetxwait = await tx.wait();
+    // console.log({ nativetxwait });
     return tx;
   } catch (e) {
     console.log({ e });

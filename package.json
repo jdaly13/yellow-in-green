@@ -29,6 +29,7 @@
     "/public/build"
   ],
   "dependencies": {
+    "@google-cloud/recaptcha-enterprise": "^5.1.0",
     "@prisma/client": "^4.5.0",
     "@remix-run/express": "^1.19.0",
     "@remix-run/node": "^1.7.6",
@@ -45,12 +46,14 @@
     "dotenv": "^16.0.3",
     "ethers": "^5.7.2",
     "express": "^4.18.2",
+    "is-ip": "^5.0.1",
     "isbot": "^3.6.3",
+    "mixpanel": "^0.18.0",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "remix-utils": "^4.1.0",
+    "remix-utils": "^4.4.0",
     "tiny-invariant": "^1.3.1",
     "wagmi": "^0.12.16"
   },
