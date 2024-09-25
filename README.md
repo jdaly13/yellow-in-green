@@ -1,6 +1,4 @@
-# YELLOWINGREEN -
-
-![ORIGINALLY SCAFFOLDED FROM REMIX INDIE STACK](https://repository-images.githubusercontent.com/465928257/a241fa49-bd4d-485a-a2a5-5cb8e4ee0abf)
+# YELLOWINGREEN - yellowingreen.com
 
 ````
 
@@ -13,9 +11,9 @@
 - Code formatting with [Prettier](https://prettier.io)
 - Linting with [ESLint](https://eslint.org)
 
-Not a fan of bits of the stack? Fork it, change it, and use `npx create-remix --template your/repo`! Make it your own.
 
 ## Quickstart
+This app is a web3 scavenger app - where users are required to get Trivia Token in order to play, the winner will get a pool of tokens for that game and additional payment in native currency.  Currently deployed to Polygon
 
 ## Development
 
@@ -28,23 +26,13 @@ Not a fan of bits of the stack? Fork it, change it, and use `npx create-remix --
 
 This starts your app in development mode, rebuilding assets on file changes.
 
-The database seed script creates a new user with some data you can use to get started:
-
 ### Relevant code:
-
-NEEDS TO BE UPDATED!!!!!!
 
 ## Deployment
 
 ### Connecting to your database
 
-### Getting Help with Deployment
-
-If you run into any issues deploying to Fly, make sure you've followed all of the steps above and if you have, then post as many details about your deployment (including your app name) to [the Fly support community](https://community.fly.io). They're normally pretty responsive over there and hopefully can help resolve any of your deployment issues and questions.
-
-### Linting
-
-This project uses ESLint for linting. That is configured in `.eslintrc.js`.
+For more info see file in app/docs
 
 ### Formatting
 
