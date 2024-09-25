@@ -67,6 +67,7 @@ export async function getSpecificGame(id) {
     include: {
       questions: true,
       user: true,
+      winner: true,
     },
   });
 }
@@ -186,7 +187,10 @@ export async function checkWinner(userId, game) {
     },
   });
   if (gameWithQuestions.questions.length === user.submissions.length) {
-    return true;
+    return {
+      nativePayout: gameWithQuestions?.nativePayoutAmount,
+      confirmed: true,
+    };
   }
   return false;
 }
@@ -199,16 +203,25 @@ export async function declareWinner(game, userId) {
   });
 
   console.log(user);
+  let winnerUpdate;
 
-  const winnerUpdate = await prisma.game.update({
-    where: {
-      id: game,
-    },
-    data: {
-      winnerId: user.address,
-      current: false,
-    },
-  });
+  try {
+    winnerUpdate = await prisma.game.update({
+      where: {
+        id: game,
+        winnerId: null,
+      },
+      data: {
+        winnerId: user.address,
+        current: false,
+      },
+    });
+  } catch (error) {
+    return {
+      winnerUpdate: null,
+    };
+  }
+
   try {
     await sendEmail({ gameId: game, winnerId: user.address });
   } catch (error) {
@@ -243,7 +256,8 @@ export async function checkAndDeclareWinner(id, game, submission) {
       return json(winnerUpdate);
     } else {
       return json({
-        error: "questions and submissions matched up but not declared winner",
+        error:
+          "questions and submissions matched up but winner already declared",
       });
     }
   } else {
@@ -257,12 +271,13 @@ export async function checkAndDeclareWinner(id, game, submission) {
   }
 }
 
-export async function createGame(game, makeActive) {
+export async function createGame(game, makeActive, nativeAmount) {
   const active = makeActive === "true" ? true : false;
   return prisma.game.create({
     data: {
       name: game,
       current: active,
+      nativePayoutAmount: nativeAmount,
     },
   });
 }

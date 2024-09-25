@@ -1,11 +1,12 @@
 import { json } from "@remix-run/node";
 import { getCurrentGame } from "~/models/game.server";
 import { useLoaderData, Link } from "@remix-run/react";
+import { mixPanelPageView } from "~/models/mixpanel.server";
 
 export async function loader({ request }) {
   const currentGame = await getCurrentGame(request);
   const network = process.env.NETWORK || "localhost";
-
+  mixPanelPageView(request, { currentGame: currentGame?.id });
   return json({
     currentGame,
     network,
@@ -42,6 +43,46 @@ export default function Index() {
                     give a small clue. It's a trivia game with a scavenger hunt
                     component.
                   </p>
+                </div>
+                <div className="my-4">
+                  <h2 className="mb-4 text-center text-xl">Prerequisites</h2>
+                  <ul className="ml-8 list-outside list-decimal">
+                    <li>
+                      A Wallet like Metamask or Coinbase wallet{" "}
+                      <a
+                        target="_blank"
+                        className="underline"
+                        href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn"
+                        rel="noreferrer"
+                      >
+                        Chrome store
+                      </a>
+                    </li>
+                    {/* TODO Change based onNetwork */}
+                    <li>
+                      Enable Polygon on your wallet -{" "}
+                      <a
+                        target="_blank"
+                        className="underline"
+                        href="https://polygon.technology/blog/getting-started-with-metamask-on-polygon"
+                        rel="noreferrer"
+                      >
+                        Guide
+                      </a>
+                    </li>
+                    <li>
+                      Purchase Ethereum and Matic ERC-20 token and bridge to
+                      Polygon -{" "}
+                      <a
+                        className="underline"
+                        target="_blank"
+                        href="https://cryptocurrencyfacts.com/how-to-use-matic-polygon-network/"
+                        rel="noreferrer"
+                      >
+                        Guide
+                      </a>
+                    </li>
+                  </ul>
                 </div>
                 <div className="my-4">
                   <h2 className="mb-4 text-center text-xl">Requirements</h2>

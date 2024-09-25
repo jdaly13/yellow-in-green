@@ -4,6 +4,7 @@ import { useMemo } from "react";
 const DEFAULT_REDIRECT = "/";
 
 export const TOTAL_MAXIMUM_INCORRECT_ANSWERS = 30;
+export const CAPTCHA_ID = "6LcOp0ApAAAAAD1_E5I-J1KHWuuT34NTLWirWeIq";
 
 /**
  * This should be used any time the redirect path is user-provided

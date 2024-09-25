@@ -5,7 +5,9 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useMatches,
 } from "@remix-run/react";
+import { CAPTCHA_ID } from "./utils";
 
 import tailwindStylesheetUrl from "./styles/tailwind.css";
 
@@ -20,6 +22,10 @@ export const meta = () => ({
 });
 
 export default function App() {
+  const matches = useMatches();
+  const isFaucetUser = matches.find(
+    (m) => m.pathname.indexOf("/faucet") !== -1
+  );
   return (
     <html
       lang="en"
@@ -35,6 +41,15 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+        {isFaucetUser && (
+          <>
+            <script
+              src={`https://www.google.com/recaptcha/enterprise.js?render=${CAPTCHA_ID}`}
+              async
+              defer
+            ></script>
+          </>
+        )}
       </body>
     </html>
   );

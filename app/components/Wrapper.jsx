@@ -8,9 +8,7 @@ export default function Wrapper({ children }) {
   const { chain, chains } = useNetwork();
   const [tokenData, setTokenData] = useState(null);
   const [deposit, setDeposit] = useState(false);
-  if (!window.Buffer) {
-    window.Buffer = Buffer;
-  }
+
   return (
     <div className="container mx-auto max-w-screen-lg">
       <Header
